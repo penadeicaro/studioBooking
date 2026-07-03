@@ -1,0 +1,1898 @@
+<!DOCTYPE html>
+<html class="light" lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Estúdio FMV - Painel Administrativo</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      "colors": {
+        "background": "#faf9f9",
+        "secondary-fixed": "#c6e7ff",
+        "primary-container": "#004b87",
+        "on-primary-fixed": "#001c38",
+        "error-container": "#ffdad6",
+        "surface-container": "#efeded",
+        "on-tertiary-container": "#e0a2ff",
+        "surface-container-low": "#f5f3f3",
+        "surface-bright": "#faf9f9",
+        "surface-container-highest": "#e3e2e2",
+        "tertiary-fixed": "#f6d9ff",
+        "inverse-surface": "#303031",
+        "on-secondary": "#ffffff",
+        "on-secondary-fixed-variant": "#004c6c",
+        "inverse-primary": "#a3c9ff",
+        "on-tertiary-fixed-variant": "#68278b",
+        "error": "#ba1a1a",
+        "tertiary": "#520c75",
+        "surface-tint": "#27609d",
+        "surface-container-high": "#e9e8e8",
+        "outline": "#727781",
+        "on-error": "#ffffff",
+        "outline-variant": "#c2c6d1",
+        "on-tertiary": "#ffffff",
+        "secondary-fixed-dim": "#83cfff",
+        "on-secondary-fixed": "#001e2e",
+        "surface-container-lowest": "#ffffff",
+        "inverse-on-surface": "#f2f0f0",
+        "on-primary-container": "#8abcff",
+        "on-background": "#1b1c1c",
+        "on-tertiary-fixed": "#300049",
+        "surface-variant": "#e3e2e2",
+        "on-surface": "#1b1c1c",
+        "tertiary-container": "#6b2b8e",
+        "surface": "#faf9f9",
+        "surface-dim": "#dbdad9",
+        "on-secondary-container": "#004867",
+        "secondary-container": "#2fbcff",
+        "primary": "#003461",
+        "on-surface-variant": "#424750",
+        "secondary": "#00658d",
+        "primary-fixed-dim": "#a3c9ff",
+        "on-primary": "#ffffff",
+        "on-error-container": "#93000a",
+        "primary-fixed": "#d3e4ff",
+        "tertiary-fixed-dim": "#e7b4ff",
+        "on-primary-fixed-variant": "#004882"
+      },
+      "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "margin-mobile": "16px",
+        "margin-desktop": "64px",
+        "base": "8px",
+        "lg": "24px",
+        "gutter": "24px",
+        "md": "16px",
+        "sm": "12px",
+        "xl": "32px",
+        "xs": "4px",
+        "container-max-width": "1200px"
+      },
+      "fontFamily": {
+        "headline-lg": ["Hanken Grotesk"],
+        "body-lg": ["Hanken Grotesk"],
+        "title-lg": ["Hanken Grotesk"],
+        "headline-lg-mobile": ["Hanken Grotesk"],
+        "display-lg": ["Hanken Grotesk"],
+        "label-sm": ["Hanken Grotesk"],
+        "body-md": ["Hanken Grotesk"],
+        "label-lg": ["Hanken Grotesk"],
+        "label-md": ["Hanken Grotesk"]
+      },
+      "fontSize": {
+        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+        "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400"}],
+        "title-lg": ["22px", {"lineHeight": "28px", "fontWeight": "500"}],
+        "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+        "display-lg": ["57px", {"lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700"}],
+        "label-sm": ["11px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}],
+        "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400"}],
+        "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500"}],
+        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}]
+      }
+    }
+  }
+}
+</script>
+<style>
+  body { font-family: 'Hanken Grotesk', sans-serif; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+
+  /* View switching (mesmo padrão do index.html público) */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  .sidebar-link { display: flex; align-items: center; padding: 0.75rem 1.5rem; color: #424750; font-family: 'Hanken Grotesk'; font-size: 14px; font-weight: 500; line-height: 20px; letter-spacing: 0.1px; border-radius: 9999px; margin: 0 12px; transition: all .15s; }
+  .sidebar-link:hover { background-color: #e9e8e8; }
+  .sidebar-link.active { background-color: #d3e4ff; color: #001c38; }
+
+  .switch-checkbox { right: 4px; z-index: 1; border-color: #c2c6d1; top: 0; }
+  .switch-checkbox:checked { right: 0; border-color: #003461; }
+  .switch-checkbox:checked + .switch-label { background-color: #a3c9ff; }
+
+  #login-error-banner { display: none; }
+  #login-error-banner.show { display: flex; }
+
+  .modal-overlay { display: none; }
+  .modal-overlay.show { display: flex; }
+
+  #login-loading-banner { display: none; }
+  #login-loading-banner.show { display: flex; }
+</style>
+</head>
+<body class="min-h-screen font-body-md text-on-surface bg-surface">
+
+<!-- ============================================================ -->
+<!-- VIEW LOGIN: Tela 6 — Login administrativo                    -->
+<!-- ============================================================ -->
+<section class="view active" data-view="login" id="view-login">
+<main class="w-full min-h-screen flex items-center justify-center px-margin-mobile md:px-margin-desktop">
+<div class="w-full max-w-md flex flex-col items-center">
+
+<div class="mb-12 text-center">
+<div class="mb-4 flex justify-center">
+<div class="bg-primary-container p-4 rounded-xl shadow-sm">
+<span class="material-symbols-outlined text-on-primary-container text-4xl">mic_external_on</span>
+</div>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">Estúdio FMV</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2 max-w-[280px] mx-auto">Plataforma de Gestão e Agendamento Institucional.</p>
+</div>
+
+<div class="w-full bg-surface border border-outline-variant p-8 rounded-xl flex flex-col items-center shadow-sm">
+<h2 class="font-title-lg text-title-lg text-on-surface mb-6">Acesso Administrativo</h2>
+
+<!-- Estado de erro: e-mail sem permissão (agora real, checado contra o nó "admins") -->
+<div class="w-full mb-6 items-start gap-3 bg-error-container text-on-error-container px-4 py-3 rounded-lg" id="login-error-banner">
+<span class="material-symbols-outlined text-[20px] mt-0.5">error</span>
+<div>
+<p class="font-label-lg text-label-lg font-bold" id="login-error-title">Este e-mail não tem permissão de acesso</p>
+<p class="font-body-md text-body-md mt-0.5" id="login-error-desc">Somente contas administrativas autorizadas podem entrar no painel. Tente novamente com a conta correta ou entre em contato com o suporte.</p>
+</div>
+</div>
+
+<!-- Estado de carregamento: aguardando resposta do Firebase Auth -->
+<div class="w-full mb-6 items-center gap-3 bg-surface-container text-on-surface px-4 py-3 rounded-lg" id="login-loading-banner">
+<span class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span>
+<p class="font-body-md text-body-md">Verificando credenciais…</p>
+</div>
+
+<button class="w-full flex items-center justify-center gap-3 bg-primary text-on-primary px-6 py-4 rounded-full font-label-lg text-label-lg transition-all active:scale-[0.98] hover:bg-opacity-90 shadow-sm hover:shadow-md" id="btn-google-login">
+<svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 12-4.53z" fill="#EA4335"></path>
+</svg>
+Entrar com Google
+</button>
+
+<div class="mt-10 flex flex-col items-center text-center space-y-4">
+<div class="flex items-center gap-2 px-4 py-2 bg-secondary-container text-on-secondary-container rounded-lg border border-outline-variant/30">
+<span class="material-symbols-outlined text-sm">lock</span>
+<p class="font-label-lg text-label-lg">Acesso restrito à administração do Estúdio FMV.</p>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant px-6 opacity-70">Utilize suas credenciais institucionais para gerenciar o estúdio, horários e agendamentos.</p>
+</div>
+</div>
+
+<footer class="mt-12 text-center">
+<p class="font-label-sm text-label-sm text-on-surface-variant/60">© 2026 Estúdio FMV. Todos os direitos reservados.</p>
+</footer>
+</div>
+</main>
+</section>
+
+<!-- ============================================================ -->
+<!-- SHELL ADMIN: sidebar rail + header + views 7-12              -->
+<!-- Fica escondido junto às demais views até o login "acontecer" -->
+<!-- ============================================================ -->
+<section class="view" data-view="admin-shell" id="view-admin-shell">
+<div class="flex min-h-screen bg-surface">
+
+<!-- Sidebar rail (persistente entre as telas 7-12) -->
+<aside class="fixed left-0 top-0 h-full w-72 bg-surface-container-low flex flex-col py-6 z-50 border-r border-outline-variant" id="admin-sidebar">
+<div class="px-6 mb-8">
+<h1 class="font-title-lg text-title-lg text-primary font-bold">Estúdio FMV</h1>
+<p class="text-label-md font-label-md text-on-surface-variant">Painel Admin</p>
+</div>
+<nav class="flex-1 space-y-1" id="admin-nav">
+<a class="sidebar-link" data-nav-target="dashboard" href="#">
+<span class="material-symbols-outlined mr-3">dashboard</span>
+Dashboard
+</a>
+<a class="sidebar-link" data-nav-target="agendamentos" href="#">
+<span class="material-symbols-outlined mr-3">calendar_month</span>
+Agendamentos
+</a>
+<a class="sidebar-link" data-nav-target="tipos" href="#">
+<span class="material-symbols-outlined mr-3">mic_external_on</span>
+Tipos de produção
+</a>
+<a class="sidebar-link" data-nav-target="configuracoes" href="#">
+<span class="material-symbols-outlined mr-3">settings</span>
+Configurações
+</a>
+</nav>
+<div class="mt-auto px-6 space-y-4">
+<button class="w-full bg-primary text-on-primary py-3 px-4 rounded-xl flex items-center justify-center font-label-lg text-label-lg transition-all hover:opacity-90 active:scale-95" data-nav-target="campos">
+<span class="material-symbols-outlined mr-2">add</span>
+Novo tipo de produção
+</button>
+<div class="pt-4 border-t border-outline-variant space-y-1">
+<a class="flex items-center py-2 text-on-surface-variant hover:text-primary transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined mr-3">help</span>
+Suporte
+</a>
+<a class="flex items-center py-2 text-on-surface-variant hover:text-error transition-all font-label-md text-label-md" href="#" id="btn-logout">
+<span class="material-symbols-outlined mr-3">logout</span>
+Sair
+</a>
+</div>
+</div>
+</aside>
+
+<!-- Conteúdo (cada sub-view interna troca aqui dentro) -->
+<div class="flex-1 ml-72 min-h-screen flex flex-col" id="admin-content">
+
+<!-- ============================================================ -->
+<!-- SUBVIEW: Tela 7 — Dashboard                                  -->
+<!-- ============================================================ -->
+<div class="admin-subview" data-subview="dashboard" id="subview-dashboard">
+<header class="h-16 flex justify-between items-center px-margin-desktop border-b border-outline-variant bg-surface sticky top-0 z-40">
+<h2 class="font-title-lg text-title-lg font-bold text-primary" id="dashboard-greeting">Dashboard</h2>
+<div class="flex items-center space-x-4">
+<button class="p-2 rounded-full hover:bg-surface-container-low transition-colors relative">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="flex items-center space-x-3">
+<div class="text-right hidden sm:block">
+<p class="font-label-lg text-label-lg text-on-surface">Admin Estúdio FMV</p>
+<p class="font-label-md text-label-md text-on-surface-variant">Gestor de Produção</p>
+</div>
+<div class="w-10 h-10 rounded-full border border-outline-variant bg-primary-container text-on-primary flex items-center justify-center font-bold">A</div>
+</div>
+</div>
+</header>
+
+<section class="p-margin-desktop max-w-container-max-width mx-auto w-full space-y-8">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<div class="bg-surface-bright p-6 rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<span class="p-2 bg-primary-fixed text-on-primary-fixed rounded-lg">
+<span class="material-symbols-outlined">event_note</span>
+</span>
+<span class="text-label-md text-primary font-medium bg-primary-fixed-dim/30 px-2 py-1 rounded" id="kpi-agendamentos-variacao">+0% vs mês anterior</span>
+</div>
+<div>
+<p class="text-label-lg font-label-lg text-on-surface-variant">Agendamentos este mês</p>
+<h3 class="text-headline-lg font-headline-lg text-primary font-bold" id="kpi-agendamentos-total">0</h3>
+</div>
+</div>
+<div class="bg-surface-bright p-6 rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<span class="p-2 bg-secondary-fixed text-on-secondary-fixed rounded-lg">
+<span class="material-symbols-outlined">schedule</span>
+</span>
+</div>
+<div>
+<p class="text-label-lg font-label-lg text-on-surface-variant">Próximo agendamento</p>
+<h3 class="text-headline-lg font-headline-lg text-primary font-bold" id="kpi-proximo">—</h3>
+</div>
+</div>
+<div class="bg-surface-bright p-6 rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<span class="p-2 bg-tertiary-fixed text-on-tertiary-fixed rounded-lg">
+<span class="material-symbols-outlined">category</span>
+</span>
+</div>
+<div>
+<p class="text-label-lg font-label-lg text-on-surface-variant">Tipos de produção ativos</p>
+<h3 class="text-headline-lg font-headline-lg text-primary font-bold" id="kpi-tipos-ativos">0</h3>
+</div>
+</div>
+</div>
+
+<div class="bg-surface-bright rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center">
+<h3 class="font-title-lg text-title-lg text-on-surface">Próximos agendamentos</h3>
+<button class="text-label-lg font-label-lg text-primary hover:bg-surface-container-low px-3 py-1 rounded-lg transition-colors" data-nav-target="agendamentos">Ver todos</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low">
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Data</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Horário</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Tipo de produção</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Solicitante</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant" id="dashboard-agendamentos-tbody"></tbody>
+</table>
+</div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<div class="lg:col-span-2 bg-surface-bright rounded-xl border border-outline-variant p-6 shadow-sm">
+<h3 class="font-title-lg text-title-lg text-on-surface mb-6">Utilização do Estúdio FMV</h3>
+<div class="space-y-6" id="dashboard-utilizacao"></div>
+</div>
+<div class="bg-primary-container text-on-primary rounded-xl p-6 shadow-sm flex flex-col justify-between">
+<div>
+<h3 class="font-title-lg text-title-lg font-bold mb-2">Dica de Gestão</h3>
+<p class="font-body-md text-body-md opacity-90 leading-relaxed">A grade padrão é seg-sex, 9h-12h e 14h-17h. Use Exceções de Agenda para feriados e manutenções.</p>
+</div>
+<button class="mt-6 w-full py-3 bg-white text-primary-container rounded-lg font-label-lg text-label-lg font-bold transition-all hover:bg-opacity-90" data-nav-target="agendamentos">Ver Agenda Completa</button>
+</div>
+</div>
+</section>
+</div>
+
+<!-- ============================================================ -->
+<!-- SUBVIEW: Tela 10 — Gerenciamento de agendamentos             -->
+<!-- ============================================================ -->
+<div class="admin-subview hidden" data-subview="agendamentos" id="subview-agendamentos">
+<header class="h-16 px-margin-desktop flex flex-col md:flex-row justify-between md:items-center gap-3 bg-surface sticky top-0 z-40 border-b border-outline-variant py-3 md:py-0">
+<div class="flex items-center gap-6">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Agendamentos</h2>
+<div class="flex bg-surface-container rounded-lg p-1" id="agendamentos-tabs">
+<button class="px-6 py-1.5 bg-surface-bright shadow-sm rounded-md font-label-lg text-label-lg text-primary flex items-center gap-2 transition-all" data-tab="lista" type="button">
+<span class="material-symbols-outlined" style="font-size: 18px;">list</span>
+Lista
+</button>
+<button class="px-6 py-1.5 text-on-surface-variant hover:text-primary font-label-lg text-label-lg flex items-center gap-2 transition-all" data-tab="calendario" type="button">
+<span class="material-symbols-outlined" style="font-size: 18px;">calendar_today</span>
+Calendário
+</button>
+</div>
+</div>
+</header>
+
+<div class="max-w-container-max-width mx-auto p-margin-desktop w-full">
+<div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+<div class="relative w-full md:w-96 group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-2.5 bg-surface border border-outline rounded-lg font-body-md text-body-md focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all" id="agendamentos-busca" placeholder="Buscar agendamento, solicitante ou tipo..." type="text"/>
+</div>
+<div class="flex items-center gap-3 w-full md:w-auto">
+<button class="flex items-center gap-2 px-4 py-2.5 border border-outline rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+Filtros
+<span class="material-symbols-outlined">expand_more</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2.5 border border-outline rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">file_download</span>
+Exportar
+</button>
+</div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-8">
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant border-l-4 border-l-primary">
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-1">Hoje</p>
+<h3 class="font-display-lg text-headline-lg font-bold text-primary" id="stat-hoje">0</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Sessões confirmadas</p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant border-l-4 border-l-secondary">
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-1">Aguardando</p>
+<h3 class="font-display-lg text-headline-lg font-bold text-secondary" id="stat-pendentes">0</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Pendentes de aprovação</p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant border-l-4 border-l-tertiary">
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-1">Esta semana</p>
+<h3 class="font-display-lg text-headline-lg font-bold text-tertiary" id="stat-semana">0</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Total de sessões</p>
+</div>
+<div class="bg-primary-container p-6 rounded-xl border border-outline-variant relative overflow-hidden">
+<div class="relative z-10">
+<p class="font-label-md text-label-md text-on-primary-container uppercase tracking-wider mb-1 opacity-80">Estúdio FMV</p>
+<h3 class="font-display-lg text-headline-lg font-bold text-on-primary" id="stat-ocupacao">0%</h3>
+<p class="font-body-md text-body-md text-on-primary opacity-80">Ocupação da grade este mês</p>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined text-on-primary" style="font-size: 120px;">mic</span>
+</div>
+</div>
+</div>
+
+<div id="agendamentos-tab-lista">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant">Data</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant">Horário</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant">Duração</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant">Tipo</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant">Solicitante</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant">Status</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant text-right">Ações</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant" id="agendamentos-tbody"></tbody>
+</table>
+</div>
+<div class="px-6 py-4 border-t border-outline-variant flex flex-col sm:flex-row items-center justify-between bg-surface-container-low gap-3">
+<p class="font-body-md text-body-md text-on-surface-variant" id="agendamentos-paginacao-texto">Exibindo agendamentos</p>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-surface-container-high rounded-full disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="px-4 py-1.5 bg-primary text-on-primary rounded-md font-label-md text-label-md">1</button>
+<button class="p-2 hover:bg-surface-container-high rounded-full disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+
+<div class="hidden" id="agendamentos-tab-calendario">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+<div class="px-6 py-4 border-b border-outline-variant flex items-center justify-between">
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors" id="cal-admin-prev">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<h3 class="font-title-lg text-title-lg text-on-surface w-48 text-center" id="cal-admin-mes-ano">—</h3>
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors" id="cal-admin-next">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<div class="flex items-center gap-4 font-label-md text-label-md text-on-surface-variant">
+<span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-primary"></span>Confirmado</span>
+<span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>Pendente</span>
+<span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-outline"></span>Bloqueado</span>
+</div>
+</div>
+<div class="grid grid-cols-7 text-center bg-surface-container-low border-b border-outline-variant" id="cal-admin-dias-semana"></div>
+<div class="grid grid-cols-7" id="cal-admin-grid"></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SUBVIEW: Tela 8 — Lista de tipos de produção                 -->
+<!-- ============================================================ -->
+<div class="admin-subview hidden" data-subview="tipos" id="subview-tipos">
+<div class="px-margin-desktop py-8 max-w-container-max-width mx-auto w-full">
+<header class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-10">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Tipos de produção</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Gerencie os modelos e campos usados no agendamento do Estúdio FMV.</p>
+</div>
+<button class="bg-primary text-on-primary font-label-lg text-label-lg py-2.5 px-6 rounded-full flex items-center gap-2 shadow-sm hover:shadow-md transition-all active:scale-95" data-nav-target="campos">
+<span class="material-symbols-outlined">add_circle</span>
+Novo tipo de produção
+</button>
+</header>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="tipos-grid"></div>
+
+<div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-primary-container text-on-primary rounded-xl p-6 flex items-start gap-4">
+<span class="material-symbols-outlined text-secondary-fixed">info</span>
+<div>
+<h4 class="font-title-lg text-label-lg font-bold">Dica de Gestão</h4>
+<p class="font-body-md text-body-md mt-1 opacity-90 text-on-primary-container">Tipos de produção inativos não aparecerão como opção para novos agendamentos, mas os registros históricos serão mantidos.</p>
+</div>
+</div>
+<div class="bg-secondary-container text-on-secondary-container rounded-xl p-6 flex items-start gap-4">
+<span class="material-symbols-outlined text-primary">auto_graph</span>
+<div>
+<h4 class="font-title-lg text-label-lg font-bold">Uso Recente</h4>
+<p class="font-body-md text-body-md mt-1 opacity-90" id="tipos-uso-recente">—</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SUBVIEW: Tela 9 — Construtor de campos                       -->
+<!-- ============================================================ -->
+<div class="admin-subview hidden" data-subview="campos" id="subview-campos">
+<header class="sticky top-0 z-40 bg-surface border-b border-outline-variant flex items-center px-margin-desktop h-16 w-full">
+<div class="flex items-center gap-4 max-w-[800px] mx-auto w-full">
+<button class="p-2 rounded-full hover:bg-surface-container-low transition-colors text-on-surface-variant active:opacity-80" data-nav-target="tipos">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-title-lg text-title-lg font-bold text-primary" id="campos-titulo">Novo tipo de produção</h1>
+</div>
+</header>
+<main class="max-w-[800px] mx-auto px-margin-mobile md:px-margin-desktop py-8 space-y-8">
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm space-y-6">
+<div class="space-y-4">
+<div class="relative w-full group">
+<label class="block text-label-md font-label-md text-on-surface-variant mb-1 ml-1" for="campos-nome-tipo">Nome do tipo de produção</label>
+<input class="w-full h-14 px-4 bg-transparent border border-outline rounded-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-outline-variant" id="campos-nome-tipo" placeholder="Ex: Videoaula — Medicina" type="text"/>
+</div>
+<div class="relative w-full">
+<label class="block text-label-md font-label-md text-on-surface-variant mb-1 ml-1" for="campos-calendar-select">Agenda do Google Calendar de destino</label>
+<div class="relative">
+<select class="w-full h-14 px-4 bg-transparent border border-outline rounded-lg appearance-none focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-on-surface" id="campos-calendar-select">
+<option value="">Selecione uma agenda...</option>
+<option value="estudio-fmv">Estúdio FMV — Agenda Principal</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
+</div>
+</div>
+<div class="relative w-full">
+<label class="block text-label-md font-label-md text-on-surface-variant mb-1 ml-1">Convidados fixos</label>
+<div class="min-h-[56px] p-2 flex flex-wrap gap-2 bg-transparent border border-outline rounded-lg focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all" id="campos-convidados-chips">
+<input class="flex-grow min-w-[150px] border-none focus:ring-0 bg-transparent text-body-md h-10 p-0 pl-2" id="campos-convidado-input" placeholder="Adicionar email... (Enter)" type="email"/>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2">
+<div>
+<p class="font-label-lg text-label-lg text-on-surface">Tipo de produção ativo</p>
+<p class="text-label-md font-label-md text-on-surface-variant">Permite que este tipo seja selecionado em novos agendamentos.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" id="campos-ativo-toggle" type="checkbox"/>
+<div class="w-14 h-8 bg-surface-container-high rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-on-surface-variant peer-checked:after:bg-on-primary after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</section>
+
+<section class="space-y-6">
+<div class="flex items-center gap-4">
+<hr class="flex-grow border-outline-variant"/>
+<h2 class="text-label-lg font-label-lg text-on-surface-variant uppercase tracking-wider">Campos personalizados</h2>
+<hr class="flex-grow border-outline-variant"/>
+</div>
+<div class="space-y-4" id="campos-fields-container"></div>
+<button class="w-full border-2 border-dashed border-outline-variant hover:border-primary rounded-xl py-4 flex items-center justify-center gap-2 text-primary font-label-lg transition-all hover:bg-primary/5 active:scale-[0.98]" id="campos-add-field" type="button">
+<span class="material-symbols-outlined">add_circle</span>
+Adicionar campo
+</button>
+</section>
+
+<div class="flex flex-col md:flex-row items-center justify-end gap-4 pt-8 border-t border-outline-variant">
+<button class="w-full md:w-auto px-6 py-2.5 text-primary font-label-lg hover:bg-surface-container-low rounded-full transition-all active:scale-95" data-nav-target="tipos" type="button">Cancelar</button>
+<button class="w-full md:w-auto px-8 py-2.5 bg-primary text-on-primary font-label-lg rounded-full shadow-sm hover:shadow-md transition-all active:scale-95" id="campos-salvar" type="button">Salvar tipo de produção</button>
+</div>
+</main>
+</div>
+
+<!-- ============================================================ -->
+<!-- SUBVIEW: Tela 11 — Configurações gerais (com Tela 12 embutida)-->
+<!-- ============================================================ -->
+<div class="admin-subview hidden" data-subview="configuracoes" id="subview-configuracoes">
+<header class="h-16 px-margin-desktop flex items-center justify-between sticky top-0 bg-surface-bright/95 backdrop-blur-md z-40 border-b border-outline-variant">
+<h1 class="font-title-lg text-title-lg font-bold text-primary">Configurações gerais</h1>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="bg-primary hover:bg-primary-container text-on-primary px-6 py-2 rounded-full font-label-lg text-label-lg transition-all active:scale-95" id="config-salvar-topo">Salvar configurações</button>
+</div>
+</header>
+
+<div class="max-w-[1000px] mx-auto p-margin-desktop space-y-8 pb-32 w-full">
+<section class="bg-surface border border-outline-variant rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center gap-3 mb-6">
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">schedule</span>
+</div>
+<h2 class="font-title-lg text-title-lg text-on-surface">Grade de Horários</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+<div class="space-y-4">
+<h3 class="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Dias de Funcionamento</h3>
+<div class="grid grid-cols-1 gap-2">
+<label class="flex items-center justify-between p-3 rounded-lg border border-outline-variant hover:bg-surface-container-low cursor-pointer transition-colors">
+<span class="font-body-md text-on-surface">Segunda a Sexta</span>
+<input checked="" class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" id="config-dias-seg-sex" type="checkbox"/>
+</label>
+<label class="flex items-center justify-between p-3 rounded-lg border border-outline-variant hover:bg-surface-container-low cursor-pointer transition-colors">
+<span class="font-body-md text-on-surface">Sábado</span>
+<input class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" id="config-dias-sabado" type="checkbox"/>
+</label>
+<label class="flex items-center justify-between p-3 rounded-lg border border-outline-variant hover:bg-surface-container-low cursor-pointer transition-colors">
+<span class="font-body-md text-on-surface">Domingo</span>
+<input class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" id="config-dias-domingo" type="checkbox"/>
+</label>
+</div>
+</div>
+<div class="space-y-6">
+<h3 class="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Intervalos de Tempo</h3>
+<div class="space-y-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[20px]">light_mode</span>
+<span class="font-label-lg text-on-surface">Manhã</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex-1">
+<label class="block text-label-md text-outline mb-1">Início</label>
+<input class="w-full bg-transparent border border-outline-variant rounded-lg p-2 focus:border-primary focus:ring-1 focus:ring-primary outline-none" id="config-manha-inicio" type="time" value="09:00"/>
+</div>
+<div class="mt-6 text-outline">às</div>
+<div class="flex-1">
+<label class="block text-label-md text-outline mb-1">Fim</label>
+<input class="w-full bg-transparent border border-outline-variant rounded-lg p-2 focus:border-primary focus:ring-1 focus:ring-primary outline-none" id="config-manha-fim" type="time" value="12:00"/>
+</div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[20px]">wb_twilight</span>
+<span class="font-label-lg text-on-surface">Tarde</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex-1">
+<label class="block text-label-md text-outline mb-1">Início</label>
+<input class="w-full bg-transparent border border-outline-variant rounded-lg p-2 focus:border-primary focus:ring-1 focus:ring-primary outline-none" id="config-tarde-inicio" type="time" value="14:00"/>
+</div>
+<div class="mt-6 text-outline">às</div>
+<div class="flex-1">
+<label class="block text-label-md text-outline mb-1">Fim</label>
+<input class="w-full bg-transparent border border-outline-variant rounded-lg p-2 focus:border-primary focus:ring-1 focus:ring-primary outline-none" id="config-tarde-fim" type="time" value="17:00"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-6 border-t border-outline-variant/30 flex justify-end">
+<button class="flex items-center gap-2 text-primary font-label-lg hover:bg-primary/5 px-4 py-2 rounded-lg transition-colors" id="btn-abrir-excecoes" type="button">
+<span class="material-symbols-outlined">event_busy</span>
+Gerenciar Exceções de Agenda
+</button>
+</div>
+</section>
+
+<section class="bg-surface border border-outline-variant rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">notifications_active</span>
+</div>
+<h2 class="font-title-lg text-title-lg text-on-surface">Notificações</h2>
+</div>
+<div class="px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full font-label-md text-label-md">Gmail API Integrado</div>
+</div>
+<div class="bg-surface-container-low rounded-lg p-6 border border-outline-variant/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="p-3 bg-white rounded-full shadow-sm">
+<span class="material-symbols-outlined text-on-surface-variant">mail</span>
+</div>
+<div>
+<p class="font-body-md text-on-surface font-medium">Envio automático de confirmação</p>
+<p class="font-label-md text-on-surface-variant">O solicitante e os convidados recebem um e-mail com os detalhes do agendamento.</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+<span class="ml-3 font-label-lg text-on-surface">Enviar cópia para estudiofaculdade.hmv.org.br</span>
+</label>
+</div>
+</section>
+
+<section class="bg-surface border border-outline-variant rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center gap-3 mb-2">
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">account_circle</span>
+</div>
+<h2 class="font-title-lg text-title-lg text-on-surface">Sua conta</h2>
+</div>
+<div class="flex flex-col md:flex-row items-center gap-8 mb-8">
+<div class="w-24 h-24 rounded-full border-4 border-secondary-container bg-primary-container text-on-primary flex items-center justify-center font-headline-lg text-headline-lg" id="conta-avatar-inicial">A</div>
+<div class="flex-1 text-center md:text-left">
+<h3 class="font-title-lg text-on-surface font-bold">Administrador logado</h3>
+<p class="font-body-md text-on-surface-variant flex items-center justify-center md:justify-start gap-2" id="conta-email-atual">
+<span id="conta-email-atual-texto">—</span>
+<span class="w-2 h-2 bg-green-500 rounded-full"></span>
+</p>
+<p class="font-label-md text-outline mt-2 italic">Acesso via Firebase Auth (Google Sign-In), restrito a e-mails da lista de administradores abaixo.</p>
+</div>
+</div>
+
+<div class="flex items-center gap-3 mb-6 pt-6 border-t border-outline-variant">
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">admin_panel_settings</span>
+</div>
+<h2 class="font-title-lg text-title-lg text-on-surface">Administradores</h2>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">Somente e-mails desta lista conseguem entrar no painel. Adicione ou remova sem precisar mexer em código.</p>
+
+<div class="flex flex-col sm:flex-row gap-3 mb-6">
+<input class="flex-1 border border-outline-variant rounded-lg px-4 py-2.5 font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary" id="admin-novo-email" placeholder="nome@instituicao.edu.br" type="email"/>
+<button class="flex items-center justify-center gap-2 bg-primary text-on-primary px-6 py-2.5 rounded-full font-label-lg text-label-lg transition-all active:scale-95 hover:bg-primary-container" id="admin-adicionar-btn" type="button">
+<span class="material-symbols-outlined text-[20px]">person_add</span>
+Adicionar
+</button>
+</div>
+
+<div class="border border-outline-variant rounded-lg divide-y divide-outline-variant" id="admin-lista">
+<!-- Renderizado via JS (renderListaAdmins) -->
+</div>
+</section>
+
+<div class="pt-8 flex flex-col-reverse sm:flex-row justify-end gap-4">
+<button class="px-8 py-3 text-outline font-label-lg text-label-lg hover:text-primary transition-colors" id="config-descartar" type="button">Descartar Alterações</button>
+<button class="bg-primary hover:bg-primary-container text-on-primary px-12 py-3 rounded-full font-label-lg text-label-lg shadow-lg shadow-primary/20 transition-all active:scale-95" id="config-salvar-rodape" type="button">Salvar configurações</button>
+</div>
+</div>
+
+<footer class="w-full py-8 px-margin-desktop flex flex-col items-center max-w-container-max-width mx-auto bg-surface-container-highest mt-auto">
+<span class="font-label-lg text-label-lg font-bold text-primary mb-2">Estúdio FMV</span>
+<p class="font-body-md text-body-md text-center text-on-surface-variant">© 2026 Estúdio FMV. Todos os direitos reservados.</p>
+</footer>
+</div>
+
+</div>
+<!-- fim #admin-content -->
+
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- MODAL: Tela 12 — Gerenciamento de exceções de agenda         -->
+<!-- ============================================================ -->
+<div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] items-center justify-center modal-overlay" id="modal-excecoes-overlay">
+<div class="bg-surface rounded-[28px] w-full max-w-lg mx-4 shadow-2xl overflow-hidden max-h-[85vh] flex flex-col">
+<div class="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+<h3 class="font-title-lg text-title-lg text-on-surface font-bold">Exceções de Agenda</h3>
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors" id="btn-fechar-excecoes">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+
+<div class="p-6 space-y-4 overflow-y-auto">
+<p class="font-body-md text-body-md text-on-surface-variant">Bloqueie datas ou horários específicos que fogem à grade padrão (feriados, manutenções, treinamentos).</p>
+
+<div class="divide-y divide-outline-variant border border-outline-variant rounded-xl overflow-hidden" id="excecoes-lista"></div>
+
+<!-- Form de nova exceção -->
+<form class="space-y-4 pt-2" id="form-nova-excecao">
+<div class="relative group">
+<label class="absolute -top-2 left-3 bg-surface px-1 text-label-sm text-primary font-medium z-10">Motivo da Exceção</label>
+<input class="w-full px-4 py-3 rounded-lg border border-outline bg-transparent focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-body-md" id="excecao-motivo" placeholder="Ex: Feriado, Manutenção..." required="" type="text"/>
+</div>
+<div class="relative group">
+<label class="absolute -top-2 left-3 bg-surface px-1 text-label-sm text-primary font-medium z-10">Data</label>
+<input class="w-full px-4 py-3 rounded-lg border border-outline bg-transparent focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-body-md" id="excecao-data" required="" type="date"/>
+</div>
+<div>
+<label class="text-label-sm text-on-surface-variant mb-2 block font-medium">Período</label>
+<div class="flex p-1 bg-surface-container-high rounded-xl">
+<button class="flex-1 py-2 rounded-lg bg-surface text-primary shadow-sm font-label-lg text-label-lg" id="excecao-btn-dia-inteiro" type="button">Dia Inteiro</button>
+<button class="flex-1 py-2 rounded-lg text-on-surface-variant font-label-lg text-label-lg hover:bg-surface-container-highest transition-colors" id="excecao-btn-personalizado" type="button">Personalizado</button>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 hidden" id="excecao-range-personalizado">
+<div class="relative group">
+<label class="absolute -top-2 left-3 bg-surface px-1 text-label-sm text-primary font-medium z-10">Início</label>
+<input class="w-full px-4 py-3 rounded-lg border border-outline bg-transparent focus:border-primary focus:ring-1 focus:ring-primary outline-none text-body-md" id="excecao-hora-inicio" type="time"/>
+</div>
+<div class="relative group">
+<label class="absolute -top-2 left-3 bg-surface px-1 text-label-sm text-primary font-medium z-10">Fim</label>
+<input class="w-full px-4 py-3 rounded-lg border border-outline bg-transparent focus:border-primary focus:ring-1 focus:ring-primary outline-none text-body-md" id="excecao-hora-fim" type="time"/>
+</div>
+</div>
+<div class="flex gap-3 pt-2">
+<button class="flex-1 py-3 px-4 border border-outline text-on-surface font-label-lg text-label-lg rounded-xl hover:bg-surface-container-high transition-colors" id="btn-cancelar-nova-excecao" type="button">Cancelar</button>
+<button class="flex-1 py-3 px-4 bg-primary text-on-primary font-label-lg text-label-lg rounded-xl shadow-md hover:shadow-lg transition-all active:scale-95" type="submit">Salvar Exceção</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+
+<script type="module">
+import { firebaseConfig, emailParaChave } from "./firebase-config.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import {
+  getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import {
+  getDatabase, ref, get, set, remove, push, onValue
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+const db = getDatabase(firebaseApp);
+const googleProvider = new GoogleAuthProvider();
+
+(function () {
+  "use strict";
+
+  /* ---------------------------------------------------------------
+   * ESTADO GLOBAL DO PAINEL ADMIN
+   * Fase 4 substitui os mocks por leitura real do Firebase Realtime
+   * Database (tipos de produção, configurações) e Google Calendar
+   * (freebusy / eventos reais), e restringe o login via Firebase Auth.
+   * ------------------------------------------------------------- */
+  const adminState = {
+    logado: false,
+    subviewAtual: "dashboard",
+    editandoTipoId: null, // quando != null, o construtor de campos está em modo edição
+    emailAdmin: null
+  };
+
+  // Primeiro admin, criado automaticamente se o nó "admins" estiver vazio
+  // (evita ficar sem nenhum acesso possível ao painel).
+  const SEED_ADMIN_EMAIL = "renan.alves@hmv.org.br";
+
+  const MESES_PT = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+  const DIAS_SEMANA_ABREV = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+
+  /* ---------------------------------------------------------------
+   * CONTRATO DE DADOS COMPARTILHADO (Fase 3.5)
+   * Schema único usado tanto aqui quanto em index.html. Ao integrar
+   * o Firebase (Fase 4), admin e público devem ler/escrever
+   * exatamente estas chaves no mesmo nó do Realtime Database.
+   *
+   * TipoProducao: { id, nome, icone, ativo, calendarNome, campos: [CampoDinamico] }
+   * CampoDinamico: { id, label, tipo, obrigatorio, opcoes? }
+   *   - id: slug estável gerado do label na criação, nunca muda depois
+   *     (só o label é editável). É a chave usada em
+   *     bookingState.camposPreenchidos no público e no log de agendamento.
+   *   - tipo: um dos valores de FIELD_TYPES (snake_case, inglês).
+   *   - opcoes: array de strings, só quando tipo === FIELD_TYPES.SELECT.
+   * ------------------------------------------------------------- */
+  const FIELD_TYPES = {
+    TEXT: "text",
+    TEXTAREA: "textarea",
+    DATE: "date",
+    SELECT: "select"
+  };
+
+  // Rótulo em PT exibido no construtor de campos <-> valor salvo no schema
+  const FIELD_TYPE_LABELS = [
+    { value: FIELD_TYPES.TEXT, label: "Texto curto" },
+    { value: FIELD_TYPES.TEXTAREA, label: "Texto longo" },
+    { value: FIELD_TYPES.DATE, label: "Data" },
+    { value: FIELD_TYPES.SELECT, label: "Lista suspensa" }
+  ];
+
+  // Gera um id estável (slug) a partir do label do campo, evitando colisão
+  // dentro do mesmo tipo de produção. Chamado só na criação do campo —
+  // depois de gerado, o id nunca é regravado mesmo se o label mudar.
+  function gerarSlugCampo(label, idsExistentes) {
+    let base = label
+      .toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // remove acentos
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "");
+    if (!base) base = "campo";
+    let slug = base;
+    let sufixo = 2;
+    while (idsExistentes.indexOf(slug) !== -1) {
+      slug = base + "_" + sufixo;
+      sufixo++;
+    }
+    return slug;
+  }
+
+  /* ---------------------------------------------------------------
+   * DADOS REAIS — carregados do Firebase Realtime Database (nó
+   * "tiposProducao"). Continuam com o nome MOCK_* porque o resto do
+   * arquivo já referencia essas variáveis; agora são preenchidas por
+   * carregarTiposProducaoDoFirebase() em vez de hardcoded.
+   * Semente usada só na primeira vez que o nó estiver vazio.
+   * ------------------------------------------------------------- */
+  const SEED_TIPOS_PRODUCAO = [
+    {
+      id: "videoaula-medicina",
+      nome: "Videoaula — Medicina",
+      icone: "school",
+      ativo: true,
+      calendarNome: "Estúdio FMV — Agenda Principal",
+      campos: [
+        { id: "unidade_curricular", label: "Unidade curricular", tipo: FIELD_TYPES.TEXT, obrigatorio: true },
+        { id: "atividade_curricular", label: "Atividade curricular", tipo: FIELD_TYPES.TEXT, obrigatorio: true },
+        { id: "nome_aula", label: "Nome da aula", tipo: FIELD_TYPES.TEXT, obrigatorio: true },
+        { id: "dia_aula_presencial", label: "Dia da aula presencial", tipo: FIELD_TYPES.DATE, obrigatorio: false }
+      ]
+    },
+    {
+      id: "institucional",
+      nome: "Gravação institucional",
+      icone: "business",
+      ativo: true,
+      calendarNome: "Estúdio FMV — Agenda Principal",
+      campos: [
+        { id: "setor_solicitante", label: "Setor solicitante", tipo: FIELD_TYPES.TEXT, obrigatorio: true },
+        { id: "responsavel_setor", label: "Responsável pelo setor", tipo: FIELD_TYPES.TEXT, obrigatorio: true },
+        { id: "descricao_gravacao", label: "Descrição da gravação", tipo: FIELD_TYPES.TEXTAREA, obrigatorio: false }
+      ]
+    },
+    {
+      id: "outras-areas",
+      nome: "Outras áreas da faculdade",
+      icone: "videocam",
+      ativo: false,
+      calendarNome: "Estúdio FMV — Agenda Principal",
+      campos: [
+        { id: "area_solicitante", label: "Área solicitante", tipo: FIELD_TYPES.TEXT, obrigatorio: true },
+        { id: "descricao_demanda", label: "Descreva a demanda", tipo: FIELD_TYPES.TEXTAREA, obrigatorio: true }
+      ]
+    }
+  ];
+  let MOCK_TIPOS_PRODUCAO = [];
+
+  // Agendamentos: Google Calendar freebusy ainda não está integrado (exige
+  // backend / Cloud Function — fora do escopo desta etapa). Continua mock.
+  const MOCK_AGENDAMENTOS = [
+    { data: "2026-07-06", diaSemana: "Segunda-feira", horaInicio: "09:00", duracao: 2, tipoId: "videoaula-medicina", solicitante: "Ana Clara Silva", status: "confirmado" },
+    { data: "2026-07-06", diaSemana: "Segunda-feira", horaInicio: "14:00", duracao: 3, tipoId: "institucional", solicitante: "Carlos Eduardo Reis", status: "confirmado" },
+    { data: "2026-07-07", diaSemana: "Terça-feira", horaInicio: "10:00", duracao: 1, tipoId: "videoaula-medicina", solicitante: "Fernanda Oliveira", status: "pendente" },
+    { data: "2026-07-08", diaSemana: "Quarta-feira", horaInicio: "09:00", duracao: 3, tipoId: "videoaula-medicina", solicitante: "Rodrigo Santos", status: "confirmado" },
+    { data: "2026-07-09", diaSemana: "Quinta-feira", horaInicio: "14:00", duracao: 2, tipoId: "institucional", solicitante: "Fábio Menezes", status: "pendente" }
+  ];
+
+  // Exceções — carregadas do nó "excecoes" do Realtime Database.
+  let MOCK_EXCECOES = [];
+
+  /* ---------------------------------------------------------------
+   * CONFIGURAÇÕES GERAIS (grade de horários) — Fase 3.5
+   * Antes só existia como HTML estático na tela de Configurações,
+   * nunca lido pelo público. Agora é objeto de estado real,
+   * inicializado com os valores que já estavam na tela, e é o que
+   * index.html deveria consumir pra gerar a grade de slots.
+   * Fase 4: vira o nó "configuracoes" no Realtime Database.
+   * ------------------------------------------------------------- */
+  const SEED_CONFIGURACOES = {
+    diasFuncionamento: [1, 2, 3, 4, 5], // 0=Dom .. 6=Sáb (padrão: seg a sex)
+    manhaInicio: "09:00",
+    manhaFim: "12:00",
+    tardeInicio: "14:00",
+    tardeFim: "17:00"
+  };
+  let MOCK_CONFIGURACOES = Object.assign({}, SEED_CONFIGURACOES);
+
+  /* ---------------------------------------------------------------
+   * NAVEGAÇÃO ENTRE VIEWS PRINCIPAIS (login <-> shell admin)
+   * ------------------------------------------------------------- */
+  function irPara(viewName) {
+    document.querySelectorAll(".view").forEach(function (el) {
+      el.classList.toggle("active", el.dataset.view === viewName);
+    });
+    window.scrollTo(0, 0);
+  }
+
+  /* ---------------------------------------------------------------
+   * NAVEGAÇÃO ENTRE SUB-VIEWS DO ADMIN (dentro do shell)
+   * ------------------------------------------------------------- */
+  function irParaSubview(subviewName, opts) {
+    opts = opts || {};
+    adminState.subviewAtual = subviewName;
+
+    document.querySelectorAll(".admin-subview").forEach(function (el) {
+      el.classList.toggle("hidden", el.dataset.subview !== subviewName);
+    });
+    document.querySelectorAll(".sidebar-link").forEach(function (link) {
+      link.classList.toggle("active", link.dataset.navTarget === subviewName);
+    });
+
+    if (subviewName === "dashboard") renderDashboard();
+    if (subviewName === "agendamentos") renderAgendamentos();
+    if (subviewName === "tipos") renderTipos();
+    if (subviewName === "campos") renderConstrutorCampos(opts.tipoId || null);
+
+    document.getElementById("admin-content").scrollTo(0, 0);
+  }
+
+  /* ---------------------------------------------------------------
+   * FIREBASE — leitura/escrita real do Realtime Database
+   * Nós: "tiposProducao", "configuracoes", "excecoes", "admins".
+   * Convertidos de/para os formatos MOCK_* que o resto do arquivo
+   * já usa, pra não precisar reescrever toda a lógica de render.
+   * ------------------------------------------------------------- */
+
+  // tiposProducao é salvo como objeto { [id]: {...sem o id} } no RTDB
+  // (chaves não podem ter caracteres especiais fora id, então usamos o
+  // próprio id do tipo, que já é um slug seguro tipo "videoaula-medicina").
+  function tiposParaObjetoDb(lista) {
+    const obj = {};
+    lista.forEach(function (t) {
+      const copia = Object.assign({}, t);
+      delete copia.id;
+      obj[t.id] = copia;
+    });
+    return obj;
+  }
+  function objetoDbParaTipos(obj) {
+    if (!obj) return [];
+    return Object.keys(obj).map(function (id) {
+      return Object.assign({ id: id }, obj[id]);
+    });
+  }
+
+  async function carregarTiposProducao() {
+    const snap = await get(ref(db, "tiposProducao"));
+    if (!snap.exists()) {
+      // Primeira vez: popula o banco com a semente e usa ela.
+      await set(ref(db, "tiposProducao"), tiposParaObjetoDb(SEED_TIPOS_PRODUCAO));
+      MOCK_TIPOS_PRODUCAO = SEED_TIPOS_PRODUCAO.map(function (t) { return Object.assign({}, t); });
+    } else {
+      MOCK_TIPOS_PRODUCAO = objetoDbParaTipos(snap.val());
+    }
+  }
+
+  async function salvarTiposProducaoNoFirebase() {
+    await set(ref(db, "tiposProducao"), tiposParaObjetoDb(MOCK_TIPOS_PRODUCAO));
+  }
+
+  async function carregarConfiguracoes() {
+    const snap = await get(ref(db, "configuracoes"));
+    if (!snap.exists()) {
+      await set(ref(db, "configuracoes"), SEED_CONFIGURACOES);
+      MOCK_CONFIGURACOES = Object.assign({}, SEED_CONFIGURACOES);
+    } else {
+      MOCK_CONFIGURACOES = Object.assign({}, SEED_CONFIGURACOES, snap.val());
+    }
+  }
+
+  async function salvarConfiguracoesNoFirebase() {
+    await set(ref(db, "configuracoes"), MOCK_CONFIGURACOES);
+  }
+
+  async function carregarExcecoes() {
+    const snap = await get(ref(db, "excecoes"));
+    if (!snap.exists()) {
+      MOCK_EXCECOES = [];
+      return;
+    }
+    const obj = snap.val();
+    MOCK_EXCECOES = Object.keys(obj).map(function (id) {
+      return Object.assign({ id: id }, obj[id]);
+    });
+  }
+
+  async function adicionarExcecaoNoFirebase(excecao) {
+    const dadosSemId = Object.assign({}, excecao);
+    delete dadosSemId.id;
+    await set(ref(db, "excecoes/" + excecao.id), dadosSemId);
+  }
+
+  async function removerExcecaoNoFirebase(id) {
+    await remove(ref(db, "excecoes/" + id));
+  }
+
+  async function checarAdmin(email) {
+    const adminsRef = ref(db, "admins");
+    const snapTodos = await get(adminsRef);
+    if (!snapTodos.exists()) {
+      // Primeiro acesso: nó "admins" vazio. Semeia com o admin inicial
+      // combinado, pra não travar o painel numa situação sem saída.
+      await set(ref(db, "admins/" + emailParaChave(SEED_ADMIN_EMAIL)), SEED_ADMIN_EMAIL);
+    }
+    const snap = await get(ref(db, "admins/" + emailParaChave(email)));
+    return snap.exists() && !!snap.val();
+  }
+
+  // Carrega todos os dados administrativos do Firebase de uma vez,
+  // usado logo após o login ser confirmado.
+  async function carregarDadosAdmin() {
+    await Promise.all([carregarTiposProducao(), carregarConfiguracoes(), carregarExcecoes()]);
+  }
+
+  /* ---------------------------------------------------------------
+   * LOGIN — Tela 6, com Firebase Auth real (signInWithPopup +
+   * checagem de e-mail contra o nó "admins" do Realtime Database)
+   * ------------------------------------------------------------- */
+  const loginErrorBanner = document.getElementById("login-error-banner");
+  const loginLoadingBanner = document.getElementById("login-loading-banner");
+  const btnGoogleLogin = document.getElementById("btn-google-login");
+
+  function setLoginLoading(carregando) {
+    loginLoadingBanner.classList.toggle("show", carregando);
+    btnGoogleLogin.disabled = carregando;
+    btnGoogleLogin.classList.toggle("opacity-50", carregando);
+    btnGoogleLogin.classList.toggle("pointer-events-none", carregando);
+  }
+
+  function mostrarErroLogin(titulo, descricao) {
+    document.getElementById("login-error-title").textContent = titulo;
+    document.getElementById("login-error-desc").textContent = descricao;
+    loginErrorBanner.classList.add("show");
+  }
+
+  btnGoogleLogin.addEventListener("click", async function () {
+    loginErrorBanner.classList.remove("show");
+    setLoginLoading(true);
+    try {
+      const resultado = await signInWithPopup(auth, googleProvider);
+      const email = resultado.user.email;
+      const ehAdmin = await checarAdmin(email);
+      if (!ehAdmin) {
+        await signOut(auth);
+        mostrarErroLogin(
+          "Este e-mail não tem permissão de acesso",
+          "A conta " + email + " não está na lista de administradores. Peça a um admin existente para te adicionar, ou entre com a conta correta."
+        );
+        setLoginLoading(false);
+        return;
+      }
+      await carregarDadosAdmin();
+      adminState.logado = true;
+      adminState.emailAdmin = email;
+      setLoginLoading(false);
+      irPara("admin-shell");
+      irParaSubview("dashboard");
+    } catch (err) {
+      setLoginLoading(false);
+      // Usuário fechou o popup não é bem um erro — não mostra banner.
+      if (err && (err.code === "auth/popup-closed-by-user" || err.code === "auth/cancelled-popup-request")) {
+        return;
+      }
+      console.error("Erro no login:", err);
+      mostrarErroLogin("Não foi possível entrar", "Ocorreu um erro ao conectar com o Google. Tente novamente em instantes.");
+    }
+  });
+
+  document.getElementById("btn-logout").addEventListener("click", async function (e) {
+    e.preventDefault();
+    await signOut(auth);
+    adminState.logado = false;
+    irPara("login");
+  });
+
+  // Se a sessão do Firebase Auth ainda estiver ativa (ex: refresh da
+  // página), reidrata o painel sem exigir novo clique em "Entrar".
+  onAuthStateChanged(auth, async function (user) {
+    if (!user || adminState.logado) return;
+    const ehAdmin = await checarAdmin(user.email);
+    if (!ehAdmin) return;
+    await carregarDadosAdmin();
+    adminState.logado = true;
+    adminState.emailAdmin = user.email;
+    carregarFormAdministradores();
+    irPara("admin-shell");
+    irParaSubview("dashboard");
+  });
+
+  /* ---------------------------------------------------------------
+   * NAV RAIL — clique em qualquer elemento com data-nav-target
+   * ------------------------------------------------------------- */
+  document.addEventListener("click", function (e) {
+    const target = e.target.closest("[data-nav-target]");
+    if (!target) return;
+    e.preventDefault();
+    if (target.dataset.navTarget === "campos") {
+      irParaSubview("campos", { tipoId: null });
+    } else {
+      irParaSubview(target.dataset.navTarget);
+    }
+  });
+
+  /* ---------------------------------------------------------------
+   * TELA 7 — Dashboard
+   * ------------------------------------------------------------- */
+  function renderDashboard() {
+    const hour = new Date().getHours();
+    const saudacao = hour < 12 ? "Bom dia, Admin" : hour < 18 ? "Boa tarde, Admin" : "Boa noite, Admin";
+    document.getElementById("dashboard-greeting").textContent = saudacao;
+
+    document.getElementById("kpi-agendamentos-total").textContent = String(MOCK_AGENDAMENTOS.length);
+    document.getElementById("kpi-tipos-ativos").textContent = String(MOCK_TIPOS_PRODUCAO.filter(function (t) { return t.ativo; }).length);
+
+    const proximo = MOCK_AGENDAMENTOS[0];
+    if (proximo) {
+      const dataObj = new Date(proximo.data + "T00:00:00");
+      document.getElementById("kpi-proximo").textContent = dataObj.getDate() + " " + MESES_PT[dataObj.getMonth()].slice(0, 3) + " às " + proximo.horaInicio;
+    }
+
+    const tbody = document.getElementById("dashboard-agendamentos-tbody");
+    tbody.innerHTML = MOCK_AGENDAMENTOS.slice(0, 4).map(function (ag) {
+      return renderLinhaAgendamentoSimples(ag);
+    }).join("");
+
+    const util = document.getElementById("dashboard-utilizacao");
+    util.innerHTML = MOCK_TIPOS_PRODUCAO.map(function (tipo) {
+      const pct = tipo.ativo ? calcularUtilizacaoTipo(tipo.id) : 0;
+      return (
+        '<div>' +
+          '<div class="flex justify-between mb-2">' +
+            '<span class="font-label-lg text-label-lg text-on-surface">' + tipo.nome + '</span>' +
+            '<span class="font-label-lg text-label-lg text-primary">' + pct + '%</span>' +
+          '</div>' +
+          '<div class="w-full bg-surface-container rounded-full h-2">' +
+            '<div class="bg-primary h-2 rounded-full" style="width:' + pct + '%"></div>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join("");
+  }
+
+  function renderLinhaAgendamentoSimples(ag) {
+    const tipo = MOCK_TIPOS_PRODUCAO.find(function (t) { return t.id === ag.tipoId; });
+    const dataObj = new Date(ag.data + "T00:00:00");
+    const dataFmt = dataObj.getDate() + " " + MESES_PT[dataObj.getMonth()].slice(0, 3) + ", " + dataObj.getFullYear();
+    const horaFim = somarHoras(ag.horaInicio, ag.duracao);
+    const statusHtml = ag.status === "confirmado"
+      ? '<span class="flex items-center text-primary font-label-md text-label-md"><span class="w-2 h-2 rounded-full bg-primary mr-2"></span>Confirmado</span>'
+      : '<span class="flex items-center text-secondary font-label-md text-label-md"><span class="w-2 h-2 rounded-full bg-secondary mr-2"></span>Pendente</span>';
+
+    return (
+      '<tr class="hover:bg-surface-container-lowest transition-colors">' +
+        '<td class="px-6 py-4 font-body-md text-body-md text-on-surface">' + dataFmt + '</td>' +
+        '<td class="px-6 py-4 font-body-md text-body-md text-on-surface">' + ag.horaInicio + ' - ' + horaFim + '</td>' +
+        '<td class="px-6 py-4"><span class="px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant font-label-md text-label-md">' + (tipo ? tipo.nome : "—") + '</span></td>' +
+        '<td class="px-6 py-4 font-body-md text-body-md text-on-surface">' + ag.solicitante + '</td>' +
+        '<td class="px-6 py-4">' + statusHtml + '</td>' +
+      '</tr>'
+    );
+  }
+
+  // Capacidade total de horas/semana da grade configurada (soma manhã + tarde
+  // dos dias de funcionamento). Usada como denominador da % de ocupação —
+  // substitui o Math.random() que só enfeitava a barra do dashboard.
+  function capacidadeHorasSemana() {
+    function horas(inicio, fim) {
+      const partes1 = inicio.split(":"), partes2 = fim.split(":");
+      const minInicio = parseInt(partes1[0], 10) * 60 + parseInt(partes1[1], 10);
+      const minFim = parseInt(partes2[0], 10) * 60 + parseInt(partes2[1], 10);
+      return Math.max(0, minFim - minInicio) / 60;
+    }
+    const horasPorDia = horas(MOCK_CONFIGURACOES.manhaInicio, MOCK_CONFIGURACOES.manhaFim) +
+      horas(MOCK_CONFIGURACOES.tardeInicio, MOCK_CONFIGURACOES.tardeFim);
+    return horasPorDia * MOCK_CONFIGURACOES.diasFuncionamento.length;
+  }
+
+  // % de ocupação de um tipo de produção específico: soma das horas de
+  // agendamentos confirmados desse tipo ÷ capacidade semanal da grade.
+  function calcularUtilizacaoTipo(tipoId) {
+    const capacidade = capacidadeHorasSemana();
+    if (capacidade === 0) return 0;
+    const horasUsadas = MOCK_AGENDAMENTOS
+      .filter(function (ag) { return ag.tipoId === tipoId && ag.status === "confirmado"; })
+      .reduce(function (soma, ag) { return soma + ag.duracao; }, 0);
+    return Math.min(100, Math.round((horasUsadas / capacidade) * 100));
+  }
+
+  // % de ocupação geral da grade (todos os tipos, usada no card "stat-ocupacao")
+  function calcularOcupacaoGeral() {
+    const capacidade = capacidadeHorasSemana();
+    if (capacidade === 0) return 0;
+    const horasUsadas = MOCK_AGENDAMENTOS
+      .filter(function (ag) { return ag.status === "confirmado"; })
+      .reduce(function (soma, ag) { return soma + ag.duracao; }, 0);
+    return Math.min(100, Math.round((horasUsadas / capacidade) * 100));
+  }
+
+  function somarHoras(horaInicio, duracaoHoras) {
+    const partes = horaInicio.split(":");
+    const totalMin = parseInt(partes[0], 10) * 60 + parseInt(partes[1], 10) + duracaoHoras * 60;
+    return String(Math.floor(totalMin / 60)).padStart(2, "0") + ":" + String(totalMin % 60).padStart(2, "0");
+  }
+
+  /* ---------------------------------------------------------------
+   * TELA 10 — Gerenciamento de agendamentos (lista + calendário)
+   * ------------------------------------------------------------- */
+  let calAdminMesAtual = new Date(2026, 6, 1); // Julho 2026
+
+  function renderAgendamentos() {
+    document.getElementById("stat-hoje").textContent = String(MOCK_AGENDAMENTOS.filter(function (a) { return a.status === "confirmado"; }).length);
+    document.getElementById("stat-pendentes").textContent = String(MOCK_AGENDAMENTOS.filter(function (a) { return a.status === "pendente"; }).length);
+    document.getElementById("stat-semana").textContent = String(MOCK_AGENDAMENTOS.length);
+    document.getElementById("stat-ocupacao").textContent = calcularOcupacaoGeral() + "%";
+    document.getElementById("agendamentos-paginacao-texto").textContent = "Exibindo " + MOCK_AGENDAMENTOS.length + " de " + MOCK_AGENDAMENTOS.length + " agendamentos";
+
+    const tbody = document.getElementById("agendamentos-tbody");
+    tbody.innerHTML = MOCK_AGENDAMENTOS.map(function (ag) {
+      const tipo = MOCK_TIPOS_PRODUCAO.find(function (t) { return t.id === ag.tipoId; });
+      const dataObj = new Date(ag.data + "T00:00:00");
+      const dataFmt = dataObj.getDate() + " " + MESES_PT[dataObj.getMonth()].slice(0, 3) + " " + dataObj.getFullYear();
+      const horaFim = somarHoras(ag.horaInicio, ag.duracao);
+      const iniciais = ag.solicitante.split(" ").map(function (p) { return p[0]; }).slice(0, 2).join("").toUpperCase();
+      const statusHtml = ag.status === "confirmado"
+        ? '<div class="flex items-center gap-2 text-primary"><span class="w-2 h-2 rounded-full bg-primary"></span><span class="font-label-lg text-label-lg">Confirmado</span></div>'
+        : '<div class="flex items-center gap-2 text-secondary"><span class="w-2 h-2 rounded-full bg-secondary"></span><span class="font-label-lg text-label-lg">Pendente</span></div>';
+
+      return (
+        '<tr class="hover:bg-surface-container-low transition-colors group">' +
+          '<td class="px-6 py-4"><p class="font-body-md text-body-md font-medium text-on-surface">' + dataFmt + '</p><p class="font-label-md text-label-md text-on-surface-variant">' + ag.diaSemana + '</p></td>' +
+          '<td class="px-6 py-4 font-body-md text-body-md text-on-surface">' + ag.horaInicio + '</td>' +
+          '<td class="px-6 py-4 font-body-md text-body-md text-on-surface">' + String(ag.duracao).padStart(2, "0") + ':00h</td>' +
+          '<td class="px-6 py-4"><span class="px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed rounded-full font-label-md text-label-md">' + (tipo ? tipo.nome : "—") + '</span></td>' +
+          '<td class="px-6 py-4"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold text-xs">' + iniciais + '</div><p class="font-body-md text-body-md font-medium">' + ag.solicitante + '</p></div></td>' +
+          '<td class="px-6 py-4">' + statusHtml + '</td>' +
+          '<td class="px-6 py-4 text-right"><button class="p-2 hover:bg-surface-container-high rounded-full transition-all opacity-0 group-hover:opacity-100"><span class="material-symbols-outlined">more_vert</span></button></td>' +
+        '</tr>'
+      );
+    }).join("");
+
+    renderCalendarioAdmin();
+  }
+
+  // Alternância de tabs Lista / Calendário
+  document.getElementById("agendamentos-tabs").addEventListener("click", function (e) {
+    const btn = e.target.closest("[data-tab]");
+    if (!btn) return;
+    document.querySelectorAll("#agendamentos-tabs [data-tab]").forEach(function (b) {
+      const ativo = b === btn;
+      b.classList.toggle("bg-surface-bright", ativo);
+      b.classList.toggle("shadow-sm", ativo);
+      b.classList.toggle("text-primary", ativo);
+      b.classList.toggle("text-on-surface-variant", !ativo);
+    });
+    document.getElementById("agendamentos-tab-lista").classList.toggle("hidden", btn.dataset.tab !== "lista");
+    document.getElementById("agendamentos-tab-calendario").classList.toggle("hidden", btn.dataset.tab !== "calendario");
+  });
+
+  // Grade real na view Calendário (gap da Fase 3 — antes era só um toggle visual)
+  function renderCalendarioAdmin() {
+    document.getElementById("cal-admin-mes-ano").textContent = MESES_PT[calAdminMesAtual.getMonth()] + " " + calAdminMesAtual.getFullYear();
+
+    const diasSemanaEl = document.getElementById("cal-admin-dias-semana");
+    diasSemanaEl.innerHTML = DIAS_SEMANA_ABREV.map(function (d) {
+      return '<div class="py-2 font-label-md text-label-md text-on-surface-variant">' + d + '</div>';
+    }).join("");
+
+    const grid = document.getElementById("cal-admin-grid");
+    grid.innerHTML = "";
+
+    const primeiroDia = new Date(calAdminMesAtual.getFullYear(), calAdminMesAtual.getMonth(), 1);
+    const ultimoDia = new Date(calAdminMesAtual.getFullYear(), calAdminMesAtual.getMonth() + 1, 0);
+    const offsetInicial = primeiroDia.getDay();
+
+    // Mapa data ISO -> agendamentos do dia
+    const porData = {};
+    MOCK_AGENDAMENTOS.forEach(function (ag) {
+      if (!porData[ag.data]) porData[ag.data] = [];
+      porData[ag.data].push(ag);
+    });
+    const excecoesPorData = {};
+    MOCK_EXCECOES.forEach(function (exc) {
+      excecoesPorData[exc.data] = exc;
+    });
+
+    for (let i = 0; i < offsetInicial; i++) {
+      grid.innerHTML += '<div class="min-h-[96px] border-b border-r border-outline-variant bg-surface-container-low/40"></div>';
+    }
+
+    for (let dia = 1; dia <= ultimoDia.getDate(); dia++) {
+      const dataObj = new Date(calAdminMesAtual.getFullYear(), calAdminMesAtual.getMonth(), dia);
+      const isoStr = dataObj.getFullYear() + "-" + String(dataObj.getMonth() + 1).padStart(2, "0") + "-" + String(dataObj.getDate()).padStart(2, "0");
+      const agsDoDia = porData[isoStr] || [];
+      const excecao = excecoesPorData[isoStr];
+
+      let eventosHtml = "";
+      if (excecao) {
+        eventosHtml += '<div class="mt-1 px-1.5 py-0.5 rounded bg-outline/20 text-on-surface-variant font-label-sm text-label-sm truncate flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-outline"></span>' + excecao.motivo + '</div>';
+      }
+      eventosHtml += agsDoDia.slice(0, 2).map(function (ag) {
+        const cor = ag.status === "confirmado" ? "bg-primary/10 text-primary" : "bg-secondary/10 text-secondary";
+        const horaFim = somarHoras(ag.horaInicio, ag.duracao);
+        return '<div class="mt-1 px-1.5 py-0.5 rounded ' + cor + ' font-label-sm text-label-sm truncate" title="' + ag.horaInicio + '–' + horaFim + ' (' + ag.duracao + 'h) ' + ag.solicitante + '">' + ag.horaInicio + '–' + horaFim + ' ' + ag.solicitante.split(" ")[0] + '</div>';
+      }).join("");
+      if (agsDoDia.length > 2) {
+        eventosHtml += '<div class="mt-1 px-1.5 font-label-sm text-label-sm text-on-surface-variant">+' + (agsDoDia.length - 2) + '</div>';
+      }
+
+      grid.innerHTML +=
+        '<div class="min-h-[96px] border-b border-r border-outline-variant p-1.5 hover:bg-surface-container-low/50 transition-colors">' +
+          '<span class="font-label-md text-label-md text-on-surface-variant">' + dia + '</span>' +
+          eventosHtml +
+        '</div>';
+    }
+  }
+
+  document.getElementById("cal-admin-prev").addEventListener("click", function () {
+    calAdminMesAtual = new Date(calAdminMesAtual.getFullYear(), calAdminMesAtual.getMonth() - 1, 1);
+    renderCalendarioAdmin();
+  });
+  document.getElementById("cal-admin-next").addEventListener("click", function () {
+    calAdminMesAtual = new Date(calAdminMesAtual.getFullYear(), calAdminMesAtual.getMonth() + 1, 1);
+    renderCalendarioAdmin();
+  });
+
+  /* ---------------------------------------------------------------
+   * TELA 8 — Lista de tipos de produção
+   * ------------------------------------------------------------- */
+  function renderTipos() {
+    const grid = document.getElementById("tipos-grid");
+    grid.innerHTML = MOCK_TIPOS_PRODUCAO.map(function (tipo) {
+      const corBarra = tipo.ativo ? "bg-primary" : "bg-outline";
+      const corIcone = tipo.ativo ? "bg-secondary-container text-on-secondary-container" : "bg-surface-container text-on-surface-variant";
+      return (
+        '<div class="bg-surface-bright border border-outline-variant rounded-xl p-6 hover:shadow-lg transition-all group relative overflow-hidden">' +
+          '<div class="absolute top-0 left-0 w-1 h-full ' + corBarra + '"></div>' +
+          '<div class="flex justify-between items-start mb-4">' +
+            '<div class="' + corIcone + ' p-2 rounded-lg"><span class="material-symbols-outlined">' + tipo.icone + '</span></div>' +
+            '<button class="text-on-surface-variant hover:bg-surface-container rounded-full p-1 transition-colors" data-nav-target="campos" data-tipo-id="' + tipo.id + '"><span class="material-symbols-outlined">edit</span></button>' +
+          '</div>' +
+          '<h3 class="font-title-lg text-title-lg text-on-surface mb-2">' + tipo.nome + '</h3>' +
+          '<div class="space-y-3 mb-6">' +
+            '<div class="flex items-center gap-2 text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">list_alt</span><span class="font-body-md text-body-md">' + tipo.campos.length + ' campo' + (tipo.campos.length === 1 ? "" : "s") + ' de formulário</span></div>' +
+            '<div class="flex items-center gap-2 text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">calendar_today</span><span class="font-body-md text-body-md">' + tipo.calendarNome + '</span></div>' +
+          '</div>' +
+          '<div class="flex items-center justify-between border-t border-outline-variant pt-4">' +
+            '<span class="font-label-lg text-label-lg text-on-surface-variant">' + (tipo.ativo ? "Ativo" : "Inativo") + '</span>' +
+            '<label class="relative inline-flex items-center cursor-pointer">' +
+              '<input class="sr-only peer" data-toggle-ativo="' + tipo.id + '" type="checkbox"' + (tipo.ativo ? " checked" : "") + '/>' +
+              '<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[\'\'] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>' +
+            '</label>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join("") +
+      '<button class="border-2 border-dashed border-outline-variant rounded-xl p-6 flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-low hover:border-primary transition-all group min-h-[240px]" data-nav-target="campos">' +
+        '<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center group-hover:bg-primary-container group-hover:text-on-primary transition-all mb-4"><span class="material-symbols-outlined">add</span></div>' +
+        '<span class="font-label-lg text-label-lg">Criar novo modelo</span>' +
+        '<p class="font-body-md text-body-md text-center mt-2 px-4 opacity-70">Defina um novo tipo de produção com campos e calendário de destino.</p>' +
+      '</button>';
+
+    grid.querySelectorAll("[data-toggle-ativo]").forEach(function (input) {
+      input.addEventListener("click", function (e) { e.stopPropagation(); });
+      input.addEventListener("change", function () {
+        const tipo = MOCK_TIPOS_PRODUCAO.find(function (t) { return t.id === input.dataset.toggleAtivo; });
+        if (tipo) tipo.ativo = input.checked;
+        renderTipos();
+        salvarTiposProducaoNoFirebase().catch(function (err) {
+          console.error("Erro ao salvar status do tipo:", err);
+        });
+      });
+    });
+
+    const maisUsado = MOCK_TIPOS_PRODUCAO[0];
+    document.getElementById("tipos-uso-recente").textContent = '"' + maisUsado.nome + '" é o tipo de produção mais solicitado nas últimas 4 semanas.';
+  }
+
+  /* ---------------------------------------------------------------
+   * TELA 9 — Construtor de campos
+   * Gap da Fase 3: expansão de opções quando o tipo é "Lista suspensa"
+   * ------------------------------------------------------------- */
+  let camposFieldCounter = 0;
+
+  function renderConstrutorCampos(tipoId) {
+    adminState.editandoTipoId = tipoId;
+    const tipo = tipoId ? MOCK_TIPOS_PRODUCAO.find(function (t) { return t.id === tipoId; }) : null;
+
+    document.getElementById("campos-titulo").textContent = tipo ? "Editar tipo de produção" : "Novo tipo de produção";
+    document.getElementById("campos-nome-tipo").value = tipo ? tipo.nome : "";
+    document.getElementById("campos-ativo-toggle").checked = tipo ? tipo.ativo : true;
+
+    const select = document.getElementById("campos-calendar-select");
+    select.value = "estudio-fmv";
+
+    const container = document.getElementById("campos-fields-container");
+    container.innerHTML = "";
+    camposFieldCounter = 0;
+
+    const camposIniciais = tipo ? tipo.campos : [
+      { label: "", tipo: FIELD_TYPES.TEXT, obrigatorio: false }
+    ];
+    camposIniciais.forEach(function (campo) {
+      adicionarFieldCard(campo);
+    });
+
+    // Convidados fixos: reidrata os chips a partir do tipo em edição
+    // (gap da Fase 3 — antes voltava sempre vazio ao reabrir p/ editar)
+    camposConvidadosChips.length = 0;
+    if (tipo && Array.isArray(tipo.convidadosFixos)) {
+      tipo.convidadosFixos.forEach(function (email) { camposConvidadosChips.push(email); });
+    }
+    renderConvidadosChips();
+  }
+
+  function adicionarFieldCard(campoData) {
+    camposFieldCounter++;
+    const uid = "field_" + camposFieldCounter;
+    const card = document.createElement("div");
+    card.className = "form-card bg-surface-container-low border border-outline-variant rounded-xl p-4 flex flex-col md:flex-row gap-4 items-start md:items-center group";
+    card.dataset.fieldUid = uid;
+    if (campoData.id) card.dataset.fieldExistingId = campoData.id; // preserva id estável em campos já existentes
+    card.innerHTML =
+      '<div class="text-on-surface-variant flex items-center justify-center" style="cursor:grab;"><span class="material-symbols-outlined">drag_indicator</span></div>' +
+      '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 flex-grow w-full">' +
+        '<div class="lg:col-span-2"><input class="w-full bg-surface border-none rounded-lg focus:ring-1 focus:ring-primary text-body-md py-2.5 px-4 shadow-sm" data-field-label placeholder="Rótulo do campo" type="text" value="' + (campoData.label || "") + '"/></div>' +
+        '<div><select class="w-full bg-surface border-none rounded-lg focus:ring-1 focus:ring-primary text-body-md py-2.5 px-4 shadow-sm" data-field-tipo>' +
+          FIELD_TYPE_LABELS.map(function (ft) { return '<option value="' + ft.value + '">' + ft.label + '</option>'; }).join("") +
+        '</select></div>' +
+        '<div class="flex items-center gap-2 px-2"><input class="w-5 h-5 rounded text-primary focus:ring-primary border-outline" data-field-obrigatorio id="req_' + uid + '" type="checkbox"' + (campoData.obrigatorio ? " checked" : "") + '/><label class="text-label-md text-on-surface-variant cursor-pointer" for="req_' + uid + '">Obrigatório</label></div>' +
+        '<div class="lg:col-span-4 hidden" data-field-opcoes-wrapper>' +
+          '<label class="block text-label-md text-on-surface-variant mb-1">Opções da lista (uma por linha)</label>' +
+          '<textarea class="w-full min-h-[80px] bg-surface border-none rounded-lg focus:ring-1 focus:ring-primary text-body-md py-2.5 px-4 shadow-sm" data-field-opcoes placeholder="Opção 1&#10;Opção 2&#10;Opção 3">' + (campoData.opcoes ? campoData.opcoes.join("\n") : "") + '</textarea>' +
+        '</div>' +
+      '</div>' +
+      '<button class="text-on-surface-variant hover:text-error transition-colors p-2 rounded-full hover:bg-error-container" data-remove-field type="button"><span class="material-symbols-outlined">delete</span></button>';
+
+    const container = document.getElementById("campos-fields-container");
+    container.appendChild(card);
+
+    const selectTipo = card.querySelector("[data-field-tipo]");
+    selectTipo.value = campoData.tipo || FIELD_TYPES.TEXT;
+    atualizarVisibilidadeOpcoes(card);
+    selectTipo.addEventListener("change", function () { atualizarVisibilidadeOpcoes(card); });
+
+    card.querySelector("[data-remove-field]").addEventListener("click", function () {
+      card.remove();
+    });
+  }
+
+  // Expansão de opções quando o tipo é "Lista suspensa" — gap da Fase 3
+  function atualizarVisibilidadeOpcoes(card) {
+    const tipo = card.querySelector("[data-field-tipo]").value;
+    const wrapper = card.querySelector("[data-field-opcoes-wrapper]");
+    wrapper.classList.toggle("hidden", tipo !== FIELD_TYPES.SELECT);
+  }
+
+  document.getElementById("campos-add-field").addEventListener("click", function () {
+    adicionarFieldCard({ label: "", tipo: FIELD_TYPES.TEXT, obrigatorio: false });
+  });
+
+  // Chip input de convidados fixos
+  const camposConvidadosChips = [];
+  function renderConvidadosChips() {
+    const wrapper = document.getElementById("campos-convidados-chips");
+    const input = document.getElementById("campos-convidado-input");
+    wrapper.querySelectorAll("[data-chip-email]").forEach(function (el) { el.remove(); });
+    camposConvidadosChips.forEach(function (email, idx) {
+      const chip = document.createElement("div");
+      chip.className = "flex items-center gap-1 bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-label-md";
+      chip.dataset.chipEmail = "true";
+      chip.innerHTML = '<span>' + email + '</span><button type="button" class="hover:opacity-70 flex items-center" data-remove-chip="' + idx + '"><span class="material-symbols-outlined text-[16px]">close</span></button>';
+      wrapper.insertBefore(chip, input);
+    });
+    wrapper.querySelectorAll("[data-remove-chip]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        camposConvidadosChips.splice(parseInt(btn.dataset.removeChip, 10), 1);
+        renderConvidadosChips();
+      });
+    });
+  }
+  document.getElementById("campos-convidado-input").addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && this.value.trim() !== "") {
+      e.preventDefault();
+      camposConvidadosChips.push(this.value.trim());
+      this.value = "";
+      renderConvidadosChips();
+    }
+  });
+
+  document.getElementById("campos-salvar").addEventListener("click", function () {
+    const nome = document.getElementById("campos-nome-tipo").value.trim();
+    if (!nome) {
+      alert("Informe o nome do tipo de produção.");
+      return;
+    }
+
+    // Tipo já existente em edição (se houver) — usado pra preservar os
+    // ids estáveis dos campos que já existiam antes desta gravação.
+    const tipoExistente = adminState.editandoTipoId
+      ? MOCK_TIPOS_PRODUCAO.find(function (t) { return t.id === adminState.editandoTipoId; })
+      : null;
+
+    // Ids já em uso neste tipo (pra gerarSlugCampo não colidir em campos novos)
+    const idsEmUso = tipoExistente ? tipoExistente.campos.map(function (c) { return c.id; }) : [];
+
+    const cards = Array.from(document.querySelectorAll("#campos-fields-container .form-card"));
+    const camposColetados = cards.map(function (card) {
+      const tipoSelecionado = card.querySelector("[data-field-tipo]").value;
+      const label = card.querySelector("[data-field-label]").value.trim();
+
+      // Id estável: gerado uma única vez na criação do campo (slug do
+      // label) e nunca mais regravado — mudar o label depois não altera
+      // o id, então histórico de agendamentos antigos continua válido.
+      let campoId = card.dataset.fieldExistingId || null;
+      if (!campoId && label !== "") {
+        campoId = gerarSlugCampo(label, idsEmUso);
+        idsEmUso.push(campoId);
+        card.dataset.fieldExistingId = campoId; // trava o id se o usuário salvar de novo sem recarregar
+      }
+
+      const campo = {
+        id: campoId,
+        label: label,
+        tipo: tipoSelecionado,
+        obrigatorio: card.querySelector("[data-field-obrigatorio]").checked
+      };
+      if (tipoSelecionado === FIELD_TYPES.SELECT) {
+        const opcoesRaw = card.querySelector("[data-field-opcoes]").value;
+        campo.opcoes = opcoesRaw.split("\n").map(function (o) { return o.trim(); }).filter(Boolean);
+      }
+      return campo;
+    }).filter(function (c) { return c.label !== ""; });
+
+    const convidadosFixos = camposConvidadosChips.slice();
+
+    if (tipoExistente) {
+      tipoExistente.nome = nome;
+      tipoExistente.campos = camposColetados;
+      tipoExistente.ativo = document.getElementById("campos-ativo-toggle").checked;
+      tipoExistente.convidadosFixos = convidadosFixos;
+    } else {
+      MOCK_TIPOS_PRODUCAO.push({
+        id: "tipo-" + Date.now(),
+        nome: nome,
+        icone: "videocam",
+        ativo: document.getElementById("campos-ativo-toggle").checked,
+        calendarNome: "Estúdio FMV — Agenda Principal",
+        campos: camposColetados,
+        convidadosFixos: convidadosFixos
+      });
+    }
+
+    salvarTiposProducaoNoFirebase().catch(function (err) {
+      console.error("Erro ao salvar tipo de produção:", err);
+      alert("Não foi possível salvar no Firebase. Tente novamente.");
+    });
+
+    irParaSubview("tipos");
+  });
+
+  /* ---------------------------------------------------------------
+   * TELA 12 — Modal de exceções de agenda (aberto a partir da 11)
+   * ------------------------------------------------------------- */
+  function renderExcecoes() {
+    const lista = document.getElementById("excecoes-lista");
+    if (MOCK_EXCECOES.length === 0) {
+      lista.innerHTML = '<p class="p-6 text-center font-body-md text-body-md text-on-surface-variant">Nenhuma exceção cadastrada.</p>';
+      return;
+    }
+    lista.innerHTML = MOCK_EXCECOES.map(function (exc) {
+      const dataObj = new Date(exc.data + "T00:00:00");
+      const dataFmt = String(dataObj.getDate()).padStart(2, "0") + "/" + String(dataObj.getMonth() + 1).padStart(2, "0");
+      const periodo = exc.diaInteiro ? "Dia Inteiro" : (exc.inicio + " às " + exc.fim);
+      return (
+        '<div class="p-4 flex items-center justify-between hover:bg-surface-container-low transition-colors group">' +
+          '<div class="flex items-center gap-4">' +
+            '<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-primary"><span class="material-symbols-outlined">' + exc.icone + '</span></div>' +
+            '<div><h5 class="font-body-lg text-body-lg font-bold">' + exc.motivo + '</h5><p class="font-body-md text-body-md text-on-surface-variant">' + dataFmt + ' • ' + periodo + '</p></div>' +
+          '</div>' +
+          '<button class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-error-container hover:text-error transition-colors" data-remove-excecao="' + exc.id + '"><span class="material-symbols-outlined text-[20px]">delete</span></button>' +
+        '</div>'
+      );
+    }).join("");
+
+    lista.querySelectorAll("[data-remove-excecao]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        const id = btn.dataset.removeExcecao;
+        MOCK_EXCECOES = MOCK_EXCECOES.filter(function (e) { return e.id !== id; });
+        renderExcecoes();
+        renderCalendarioAdmin();
+        removerExcecaoNoFirebase(id).catch(function (err) {
+          console.error("Erro ao remover exceção:", err);
+        });
+      });
+    });
+  }
+
+  document.getElementById("btn-abrir-excecoes").addEventListener("click", function () {
+    renderExcecoes();
+    document.getElementById("modal-excecoes-overlay").classList.add("show");
+  });
+  document.getElementById("btn-fechar-excecoes").addEventListener("click", function () {
+    document.getElementById("modal-excecoes-overlay").classList.remove("show");
+  });
+  document.getElementById("modal-excecoes-overlay").addEventListener("click", function (e) {
+    if (e.target.id === "modal-excecoes-overlay") {
+      document.getElementById("modal-excecoes-overlay").classList.remove("show");
+    }
+  });
+
+  const excBtnDiaInteiro = document.getElementById("excecao-btn-dia-inteiro");
+  const excBtnPersonalizado = document.getElementById("excecao-btn-personalizado");
+  const excRangePersonalizado = document.getElementById("excecao-range-personalizado");
+  let excecaoDiaInteiro = true;
+
+  excBtnDiaInteiro.addEventListener("click", function () {
+    excecaoDiaInteiro = true;
+    excBtnDiaInteiro.classList.add("bg-surface", "text-primary", "shadow-sm");
+    excBtnDiaInteiro.classList.remove("text-on-surface-variant");
+    excBtnPersonalizado.classList.remove("bg-surface", "text-primary", "shadow-sm");
+    excBtnPersonalizado.classList.add("text-on-surface-variant");
+    excRangePersonalizado.classList.add("hidden");
+  });
+  excBtnPersonalizado.addEventListener("click", function () {
+    excecaoDiaInteiro = false;
+    excBtnPersonalizado.classList.add("bg-surface", "text-primary", "shadow-sm");
+    excBtnPersonalizado.classList.remove("text-on-surface-variant");
+    excBtnDiaInteiro.classList.remove("bg-surface", "text-primary", "shadow-sm");
+    excBtnDiaInteiro.classList.add("text-on-surface-variant");
+    excRangePersonalizado.classList.remove("hidden");
+  });
+
+  document.getElementById("btn-cancelar-nova-excecao").addEventListener("click", function () {
+    document.getElementById("form-nova-excecao").reset();
+  });
+
+  document.getElementById("form-nova-excecao").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const motivo = document.getElementById("excecao-motivo").value.trim();
+    const data = document.getElementById("excecao-data").value;
+    if (!motivo || !data) {
+      alert("Preencha o motivo e a data da exceção.");
+      return;
+    }
+
+    const novaExcecao = {
+      id: "exc-" + Date.now(),
+      motivo: motivo,
+      data: data,
+      diaInteiro: excecaoDiaInteiro,
+      icone: "event_busy"
+    };
+    if (!excecaoDiaInteiro) {
+      novaExcecao.inicio = document.getElementById("excecao-hora-inicio").value || "00:00";
+      novaExcecao.fim = document.getElementById("excecao-hora-fim").value || "23:59";
+    }
+    MOCK_EXCECOES.push(novaExcecao);
+
+    this.reset();
+    renderExcecoes();
+    renderCalendarioAdmin();
+
+    adicionarExcecaoNoFirebase(novaExcecao).catch(function (err) {
+      console.error("Erro ao salvar exceção:", err);
+      alert("Não foi possível salvar a exceção no Firebase. Tente novamente.");
+    });
+  });
+
+  /* ---------------------------------------------------------------
+   * TELA 11 — Configurações Gerais (grade de horários)
+   * Gap da Fase 3: a tela era só HTML estático, nunca lida por
+   * ninguém — o público sempre usava HORARIOS_POSSIVEIS fixo. Agora
+   * lê/escreve MOCK_CONFIGURACOES de verdade. Fase 4: isso vira o
+   * write real no nó "configuracoes" do Realtime Database.
+   * ------------------------------------------------------------- */
+  function carregarFormConfiguracoes() {
+    document.getElementById("config-dias-seg-sex").checked =
+      [1, 2, 3, 4, 5].every(function (d) { return MOCK_CONFIGURACOES.diasFuncionamento.indexOf(d) !== -1; });
+    document.getElementById("config-dias-sabado").checked = MOCK_CONFIGURACOES.diasFuncionamento.indexOf(6) !== -1;
+    document.getElementById("config-dias-domingo").checked = MOCK_CONFIGURACOES.diasFuncionamento.indexOf(0) !== -1;
+    document.getElementById("config-manha-inicio").value = MOCK_CONFIGURACOES.manhaInicio;
+    document.getElementById("config-manha-fim").value = MOCK_CONFIGURACOES.manhaFim;
+    document.getElementById("config-tarde-inicio").value = MOCK_CONFIGURACOES.tardeInicio;
+    document.getElementById("config-tarde-fim").value = MOCK_CONFIGURACOES.tardeFim;
+    carregarFormAdministradores();
+  }
+
+  /* ---------------------------------------------------------------
+   * ADMINISTRADORES — nó "admins" do Realtime Database
+   * Chave = e-mail normalizado (emailParaChave), valor = true.
+   * Regra de segurança do banco: só quem já está nesse nó pode ler/
+   * escrever tiposProducao/configuracoes/excecoes/admins (ver as
+   * Database Rules sugeridas separadamente).
+   * ------------------------------------------------------------- */
+  async function renderListaAdmins() {
+    const container = document.getElementById("admin-lista");
+    container.innerHTML = '<p class="p-4 font-body-md text-body-md text-on-surface-variant">Carregando…</p>';
+
+    const snap = await get(ref(db, "admins"));
+    const admins = snap.exists() ? snap.val() : {};
+    const emails = Object.keys(admins).filter(function (k) { return admins[k] === true; });
+
+    if (emails.length === 0) {
+      container.innerHTML = '<p class="p-4 font-body-md text-body-md text-on-surface-variant">Nenhum administrador cadastrado.</p>';
+      return;
+    }
+
+    container.innerHTML = emails.map(function (chave) {
+      // Chave é o e-mail normalizado; não temos o e-mail original salvo à
+      // parte, então guardamos também o e-mail "de exibição" no valor.
+      const emailExibicao = typeof admins[chave] === "string" ? admins[chave] : chave.replace(/_/g, ".");
+      return (
+        '<div class="p-4 flex items-center justify-between">' +
+          '<div class="flex items-center gap-3">' +
+            '<span class="material-symbols-outlined text-on-surface-variant">person</span>' +
+            '<span class="font-body-md text-body-md text-on-surface">' + emailExibicao + '</span>' +
+          '</div>' +
+          '<button class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-error-container hover:text-error transition-colors" data-remove-admin="' + chave + '" title="Remover"><span class="material-symbols-outlined text-[20px]">delete</span></button>' +
+        '</div>'
+      );
+    }).join("");
+
+    container.querySelectorAll("[data-remove-admin]").forEach(function (btn) {
+      btn.addEventListener("click", async function () {
+        const chave = btn.dataset.removeAdmin;
+        if (adminState.emailAdmin && emailParaChave(adminState.emailAdmin) === chave) {
+          alert("Você não pode remover a si mesmo enquanto estiver logado.");
+          return;
+        }
+        if (!confirm("Remover este administrador? Ele perderá acesso ao painel imediatamente.")) return;
+        try {
+          await remove(ref(db, "admins/" + chave));
+          renderListaAdmins();
+        } catch (err) {
+          console.error("Erro ao remover admin:", err);
+          alert("Não foi possível remover. Tente novamente.");
+        }
+      });
+    });
+  }
+
+  function carregarFormAdministradores() {
+    document.getElementById("conta-email-atual-texto").textContent = adminState.emailAdmin || "—";
+    document.getElementById("conta-avatar-inicial").textContent =
+      adminState.emailAdmin ? adminState.emailAdmin.charAt(0).toUpperCase() : "A";
+    renderListaAdmins();
+  }
+
+  document.getElementById("admin-adicionar-btn").addEventListener("click", async function () {
+    const input = document.getElementById("admin-novo-email");
+    const email = input.value.trim().toLowerCase();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      alert("Digite um e-mail válido.");
+      return;
+    }
+    try {
+      // Guardamos o e-mail original como valor (em vez de só "true") pra
+      // conseguir exibi-lo formatado corretamente depois.
+      await set(ref(db, "admins/" + emailParaChave(email)), email);
+      input.value = "";
+      renderListaAdmins();
+    } catch (err) {
+      console.error("Erro ao adicionar admin:", err);
+      alert("Não foi possível adicionar. Tente novamente.");
+    }
+  });
+
+  function salvarConfiguracoes() {
+    const dias = [];
+    if (document.getElementById("config-dias-seg-sex").checked) dias.push(1, 2, 3, 4, 5);
+    if (document.getElementById("config-dias-sabado").checked) dias.push(6);
+    if (document.getElementById("config-dias-domingo").checked) dias.push(0);
+
+    MOCK_CONFIGURACOES.diasFuncionamento = dias.sort();
+    MOCK_CONFIGURACOES.manhaInicio = document.getElementById("config-manha-inicio").value || MOCK_CONFIGURACOES.manhaInicio;
+    MOCK_CONFIGURACOES.manhaFim = document.getElementById("config-manha-fim").value || MOCK_CONFIGURACOES.manhaFim;
+    MOCK_CONFIGURACOES.tardeInicio = document.getElementById("config-tarde-inicio").value || MOCK_CONFIGURACOES.tardeInicio;
+    MOCK_CONFIGURACOES.tardeFim = document.getElementById("config-tarde-fim").value || MOCK_CONFIGURACOES.tardeFim;
+
+    renderAgendamentos(); // % de ocupação depende da capacidade da grade
+    salvarConfiguracoesNoFirebase()
+      .then(function () { alert("Configurações salvas."); })
+      .catch(function (err) {
+        console.error("Erro ao salvar configurações:", err);
+        alert("Não foi possível salvar no Firebase. Tente novamente.");
+      });
+  }
+
+  document.getElementById("config-salvar-topo").addEventListener("click", salvarConfiguracoes);
+  document.getElementById("config-salvar-rodape").addEventListener("click", salvarConfiguracoes);
+  document.getElementById("config-descartar").addEventListener("click", carregarFormConfiguracoes);
+
+  const subviewOriginal = irParaSubview;
+  irParaSubview = function (subviewName, opts) {
+    subviewOriginal(subviewName, opts);
+    if (subviewName === "configuracoes") carregarFormConfiguracoes();
+  };
+
+  /* ---------------------------------------------------------------
+   * PROTEÇÃO DE ROTA
+   * Gate de renderização: só libera "admin-shell" se adminState.logado
+   * for true, o que só acontece após signInWithPopup + confirmação do
+   * e-mail no nó "admins" do Realtime Database (ver bloco LOGIN acima).
+   * ------------------------------------------------------------- */
+  const irParaOriginal = irPara;
+  irPara = function (viewName) {
+    if (viewName === "admin-shell" && !adminState.logado) {
+      irParaOriginal("login");
+      return;
+    }
+    irParaOriginal(viewName);
+  };
+
+  /* ---------------------------------------------------------------
+   * INIT
+   * ------------------------------------------------------------- */
+  irPara("login");
+})();
+</script>
+</body>
+</html>

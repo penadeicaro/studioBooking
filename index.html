@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html class="light" lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Estúdio FMV - Agendamento de Gravações</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      "colors": {
+        "background": "#faf9f9",
+        "secondary-fixed": "#c6e7ff",
+        "primary-container": "#004b87",
+        "on-primary-fixed": "#001c38",
+        "error-container": "#ffdad6",
+        "surface-container": "#efeded",
+        "on-tertiary-container": "#e0a2ff",
+        "surface-container-low": "#f5f3f3",
+        "surface-bright": "#faf9f9",
+        "surface-container-highest": "#e3e2e2",
+        "tertiary-fixed": "#f6d9ff",
+        "inverse-surface": "#303031",
+        "on-secondary": "#ffffff",
+        "on-secondary-fixed-variant": "#004c6c",
+        "inverse-primary": "#a3c9ff",
+        "on-tertiary-fixed-variant": "#68278b",
+        "error": "#ba1a1a",
+        "tertiary": "#520c75",
+        "surface-tint": "#27609d",
+        "surface-container-high": "#e9e8e8",
+        "outline": "#727781",
+        "on-error": "#ffffff",
+        "outline-variant": "#c2c6d1",
+        "on-tertiary": "#ffffff",
+        "secondary-fixed-dim": "#83cfff",
+        "on-secondary-fixed": "#001e2e",
+        "surface-container-lowest": "#ffffff",
+        "inverse-on-surface": "#f2f0f0",
+        "on-primary-container": "#8abcff",
+        "on-background": "#1b1c1c",
+        "on-tertiary-fixed": "#300049",
+        "surface-variant": "#e3e2e2",
+        "on-surface": "#1b1c1c",
+        "tertiary-container": "#6b2b8e",
+        "surface": "#faf9f9",
+        "surface-dim": "#dbdad9",
+        "on-secondary-container": "#004867",
+        "secondary-container": "#2fbcff",
+        "primary": "#003461",
+        "on-surface-variant": "#424750",
+        "secondary": "#00658d",
+        "primary-fixed-dim": "#a3c9ff",
+        "on-primary": "#ffffff",
+        "on-error-container": "#93000a",
+        "primary-fixed": "#d3e4ff",
+        "tertiary-fixed-dim": "#e7b4ff",
+        "on-primary-fixed-variant": "#004882"
+      },
+      "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "margin-mobile": "16px",
+        "margin-desktop": "64px",
+        "base": "8px",
+        "lg": "24px",
+        "gutter": "24px",
+        "md": "16px",
+        "sm": "12px",
+        "xl": "32px",
+        "xs": "4px",
+        "container-max-width": "1200px"
+      },
+      "fontFamily": {
+        "headline-lg": ["Hanken Grotesk"],
+        "body-lg": ["Hanken Grotesk"],
+        "title-lg": ["Hanken Grotesk"],
+        "headline-lg-mobile": ["Hanken Grotesk"],
+        "display-lg": ["Hanken Grotesk"],
+        "label-sm": ["Hanken Grotesk"],
+        "body-md": ["Hanken Grotesk"],
+        "label-lg": ["Hanken Grotesk"],
+        "label-md": ["Hanken Grotesk"]
+      },
+      "fontSize": {
+        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+        "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400"}],
+        "title-lg": ["22px", {"lineHeight": "28px", "fontWeight": "500"}],
+        "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+        "display-lg": ["57px", {"lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700"}],
+        "label-sm": ["11px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}],
+        "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400"}],
+        "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500"}]
+      }
+    }
+  }
+}
+</script>
+<style>
+  body { font-family: 'Hanken Grotesk', sans-serif; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+  /* Floating label */
+  .floating-label-group { position: relative; }
+  .floating-label-group input:focus ~ label,
+  .floating-label-group input:not(:placeholder-shown) ~ label {
+    top: -0.5rem; left: 0.8rem; font-size: 0.75rem;
+    background-color: white; padding: 0 0.25rem; color: #003461;
+  }
+  .floating-label-group label {
+    position: absolute; top: 1rem; left: 1rem;
+    transition: all 0.2s ease-out; pointer-events: none;
+  }
+
+  .content-canvas { min-height: calc(100vh - 64px); background-color: #faf9f9; }
+
+  .stepper-line { height: 2px; flex-grow: 1; background-color: #c2c6d1; }
+  .stepper-line.active { background-color: #003461; }
+
+  .date-picker-grid { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; }
+  .disabled-day { color: #c2c6d1; cursor: not-allowed; }
+  .tooltip-trigger:hover + .tooltip { opacity: 1; visibility: visible; }
+  .transition-chip { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+
+  /* View switching */
+  .view { display: none; }
+  .view.active { display: block; }
+</style>
+</head>
+<body class="min-h-screen flex flex-col font-body-md text-on-surface bg-surface">
+
+<!-- ============================================================ -->
+<!-- VIEW 1: Seleção de tipo de produção                          -->
+<!-- ============================================================ -->
+<section class="view active" data-view="tipo" id="view-tipo">
+<nav class="bg-surface w-full top-0 border-b border-outline-variant z-50">
+<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 max-w-container-max-width mx-auto">
+<div class="text-title-lg font-title-lg font-bold text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">mic_external_on</span>
+Estúdio FMV
+</div>
+</div>
+</nav>
+
+<main class="flex-grow flex flex-col items-center justify-center px-margin-mobile md:px-margin-desktop py-12">
+<div class="max-w-2xl w-full text-center mb-10">
+<h1 class="font-headline-lg text-headline-lg md:text-headline-lg text-on-background mb-4">Agendar horário de gravação</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Selecione o tipo de produção que deseja realizar para prosseguirmos com a sua reserva no Estúdio FMV.</p>
+</div>
+
+<div class="w-full max-w-2xl space-y-4" id="production-type-list">
+  <!-- Cards de tipo de produção são renderizados aqui via JS (renderProductionTypes) -->
+</div>
+</main>
+
+<footer class="bg-surface-container-highest w-full py-8 px-margin-mobile md:px-margin-desktop mt-auto border-t border-outline-variant">
+<div class="w-full flex flex-col md:flex-row items-center max-w-container-max-width mx-auto gap-4 justify-center">
+<div class="flex flex-col md:flex-row items-center gap-2 md:gap-6">
+<span class="font-label-lg text-label-lg font-bold text-primary">Estúdio FMV</span>
+<span class="font-body-md text-body-md text-on-surface-variant">© 2026 Estúdio FMV. Todos os direitos reservados.</span>
+</div>
+</div>
+<div class="max-w-container-max-width mx-auto text-center mt-6 text-on-surface-variant/70 font-label-md text-label-md">Dúvidas? Entre em contato com o Estúdio FMV.</div>
+</footer>
+</section>
+
+<!-- ============================================================ -->
+<!-- VIEW 2: Detalhes / campos dinâmicos                          -->
+<!-- ============================================================ -->
+<section class="view" data-view="detalhes" id="view-detalhes">
+<header class="bg-surface border-b border-outline-variant w-full top-0 z-50 sticky">
+<div class="flex justify-between items-center px-4 md:px-margin-desktop h-16 max-w-container-max-width mx-auto">
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-surface-container-low rounded-full transition-colors active:opacity-80" data-action="back-to-tipo">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="text-title-lg font-title-lg font-bold text-primary" id="detalhes-titulo">Detalhes da produção</h1>
+</div>
+<span class="hidden md:block font-label-lg text-label-lg text-on-surface-variant opacity-60">Estúdio FMV</span>
+</div>
+</header>
+
+<main class="content-canvas px-4 md:px-margin-desktop py-8 max-w-container-max-width mx-auto">
+<div class="flex items-center justify-between mb-10 max-w-2xl mx-auto w-full">
+<div class="flex flex-col items-center gap-2 flex-1">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center text-label-md font-bold">1</div>
+<span class="font-label-lg text-label-lg text-primary">Detalhes</span>
+</div>
+<div class="stepper-line mx-2 active"></div>
+<div class="flex flex-col items-center gap-2 flex-1 opacity-50">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center text-label-md">2</div>
+<span class="font-label-lg text-label-lg text-on-surface-variant">Horário</span>
+</div>
+<div class="stepper-line mx-2"></div>
+<div class="flex flex-col items-center gap-2 flex-1 opacity-50">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center text-label-md">3</div>
+<span class="font-label-lg text-label-lg text-on-surface-variant">Confirmação</span>
+</div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<div class="lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 md:p-8 shadow-sm">
+<h2 class="font-title-lg text-title-lg text-on-surface mb-6">Informações da produção</h2>
+<form class="space-y-8" id="form-detalhes">
+<div id="campos-dinamicos" class="space-y-8">
+  <!-- Campos dinâmicos do tipo de produção selecionado são renderizados aqui via JS (renderCamposDinamicos) -->
+</div>
+<div class="flex items-center justify-between pt-6 border-t border-outline-variant mt-10">
+<button class="px-6 py-2.5 text-primary font-label-lg text-label-lg hover:bg-surface-container-low rounded-full transition-all active:scale-95" data-action="back-to-tipo" type="button">Voltar</button>
+<button class="px-8 py-2.5 bg-primary text-on-primary font-label-lg text-label-lg rounded-full shadow-sm hover:shadow-md hover:opacity-90 transition-all active:scale-95" type="submit">Continuar</button>
+</div>
+</form>
+</div>
+
+<div class="lg:col-span-4 space-y-gutter">
+<div class="bg-primary-container p-6 rounded-xl relative overflow-hidden h-48 flex flex-col justify-end">
+<div class="relative z-10 h-full flex flex-col">
+<div class="flex justify-between items-start mb-auto">
+<span class="material-symbols-outlined text-on-primary-container">lightbulb</span>
+</div>
+<div>
+<p class="font-title-lg text-on-primary-container leading-tight">Dica do Estúdio</p>
+<p class="font-body-md text-on-primary-container opacity-80">Roupas sem listras finas evitam o efeito moiré na gravação.</p>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low border border-outline-variant p-6 rounded-xl">
+<h3 class="font-label-lg text-label-lg text-primary uppercase tracking-wider mb-4">Resumo do Pedido</h3>
+<div class="space-y-4">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-on-surface-variant mt-1">video_camera_back</span>
+<div>
+<p class="font-label-lg text-label-lg text-on-surface">Tipo de Produção</p>
+<p class="font-body-md text-body-md text-on-surface-variant" id="resumo-tipo-producao">—</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</section>
+
+<!-- ============================================================ -->
+<!-- VIEW 3: Seleção de horário                                   -->
+<!-- ============================================================ -->
+<section class="view" data-view="horario" id="view-horario">
+<nav class="w-full top-0 bg-surface border-b border-outline-variant h-16 sticky z-50">
+<div class="flex justify-between items-center px-margin-desktop h-16 max-w-container-max-width mx-auto">
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-surface-container-low transition-colors active:opacity-80" data-action="back-to-detalhes">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-title-lg text-title-lg font-bold text-primary">Escolha o horário</h1>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex flex-col items-center">
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-[10px] text-white font-bold">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+</div>
+<div class="w-8 h-0.5 bg-primary"></div>
+<div class="flex flex-col items-center">
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-[12px] text-white font-bold">2</div>
+</div>
+<div class="w-8 h-0.5 bg-outline-variant"></div>
+<div class="flex flex-col items-center">
+<div class="w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center text-[12px] text-outline font-bold">3</div>
+</div>
+</div>
+</div>
+</nav>
+
+<main class="max-w-container-max-width mx-auto px-margin-desktop py-12">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<div class="lg:col-span-5 flex flex-col gap-8">
+<div class="bg-surface-container-low rounded-xl p-6 shadow-sm border border-outline-variant/30">
+<div class="flex justify-between items-center mb-6">
+<span class="font-title-lg text-title-lg text-on-surface" id="calendario-mes-ano">Novembro 2026</span>
+<div class="flex gap-2">
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors" data-action="mes-anterior"><span class="material-symbols-outlined">chevron_left</span></button>
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors" data-action="mes-proximo"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+</div>
+<div class="date-picker-grid text-label-sm font-label-sm text-outline mb-4">
+<span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
+</div>
+<div class="date-picker-grid gap-y-2" id="calendario-dias">
+  <!-- Dias do mês são renderizados aqui via JS (renderCalendario) -->
+</div>
+</div>
+
+<div class="flex flex-col gap-3 relative">
+<div class="flex items-center gap-2">
+<label class="font-label-lg text-label-lg text-on-surface-variant">Duração da sessão</label>
+<div class="relative group">
+<span class="material-symbols-outlined text-[18px] text-outline cursor-help tooltip-trigger">info</span>
+<div class="tooltip absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 p-3 bg-inverse-surface text-inverse-on-surface text-label-sm font-label-sm rounded-lg shadow-xl opacity-0 visibility-hidden transition-all z-10 pointer-events-none">
+Horários de início ficam indisponíveis se não houver espaço livre suficiente para a duração escolhida.
+<div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-inverse-surface"></div>
+</div>
+</div>
+</div>
+<div class="flex border border-outline rounded-lg overflow-hidden w-full max-w-md" id="duracao-buttons">
+<button class="flex-1 py-3 px-4 font-label-lg text-label-lg border-r border-outline hover:bg-surface-container transition-colors" data-duracao="1">1 hora</button>
+<button class="flex-1 py-3 px-4 font-label-lg text-label-lg border-r border-outline hover:bg-surface-container transition-colors" data-duracao="2">2 horas</button>
+<button class="flex-1 py-3 px-4 font-label-lg text-label-lg hover:bg-surface-container transition-colors" data-duracao="3">3 horas</button>
+</div>
+</div>
+</div>
+
+<div class="lg:col-span-7">
+<div class="bg-surface-bright rounded-xl p-8 border border-outline-variant shadow-sm h-full">
+<h3 class="font-title-lg text-title-lg text-primary mb-8" id="horarios-titulo">Selecione uma data no calendário</h3>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="horarios-grid">
+  <!-- Chips de horário são renderizados aqui via JS (renderHorarios) -->
+</div>
+<div class="mt-12 p-4 rounded-lg bg-surface-container-low border-l-4 border-primary">
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-primary">event_seat</span>
+<div>
+<p class="font-label-lg text-label-lg text-on-surface">Estúdio FMV — Núcleo de Educação a Distância</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Espaço equipado para gravação de videoaulas e produções institucionais.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+<div class="fixed bottom-0 left-0 w-full bg-surface/80 backdrop-blur-md border-t border-outline-variant py-6 px-margin-desktop z-40">
+<div class="max-w-container-max-width mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="flex flex-col text-center md:text-left">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Resumo da Seleção</span>
+<p class="font-title-lg text-title-lg text-primary font-bold" id="resumo-selecao">Selecione data, duração e horário</p>
+</div>
+<div class="flex gap-4 items-center">
+<button class="font-label-lg text-label-lg text-primary px-8 py-3 rounded-full hover:bg-primary/5 transition-all active:scale-95" data-action="back-to-detalhes">Voltar</button>
+<button class="font-label-lg text-label-lg bg-primary text-on-primary px-12 py-3 rounded-full hover:shadow-lg transition-all active:scale-95 font-bold disabled:opacity-40 disabled:pointer-events-none" data-action="continuar-para-dados" id="btn-continuar-horario" disabled="">Continuar</button>
+</div>
+</div>
+</div>
+<div class="h-32"></div>
+</section>
+
+<!-- ============================================================ -->
+<!-- VIEW 4: Dados do solicitante                                 -->
+<!-- ============================================================ -->
+<section class="view" data-view="dados" id="view-dados">
+<header class="bg-surface border-b border-outline-variant w-full top-0 z-50 sticky">
+<div class="flex justify-between items-center px-4 md:px-margin-desktop h-16 max-w-container-max-width mx-auto">
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-surface-container-low rounded-full transition-colors active:opacity-80" data-action="back-to-horario">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="text-title-lg font-title-lg font-bold text-primary">Seus dados</h1>
+</div>
+<span class="hidden md:block font-label-lg text-label-lg text-on-surface-variant opacity-60">Estúdio FMV</span>
+</div>
+</header>
+
+<main class="max-w-[800px] mx-auto px-margin-mobile md:px-margin-desktop py-8 space-y-8">
+<div class="flex items-center justify-between px-4 mb-10">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center text-label-md font-bold">1</div>
+<span class="hidden sm:block text-label-md text-primary font-bold">Seleção</span>
+</div>
+<div class="stepper-line active mx-4"></div>
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center text-label-md font-bold">2</div>
+<span class="hidden sm:block text-label-md text-primary font-bold">Horário</span>
+</div>
+<div class="stepper-line active mx-4"></div>
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center text-label-md font-bold">3</div>
+<span class="hidden sm:block text-label-md text-primary font-bold">Dados</span>
+</div>
+</div>
+
+<section class="bg-surface-container-low rounded-xl p-6 border border-outline-variant shadow-sm">
+<div class="flex items-start justify-between mb-4">
+<h2 class="text-label-lg font-bold text-secondary uppercase tracking-wider">Resumo do Agendamento</h2>
+<span class="material-symbols-outlined text-outline">description</span>
+</div>
+<div class="grid grid-cols-1 gap-6" id="resumo-agendamento-dados">
+  <!-- Resumo completo (tipo, campos, data/hora) é renderizado aqui via JS (renderResumoDados) -->
+</div>
+</section>
+
+<section class="bg-surface-bright rounded-xl border border-outline-variant p-8 shadow-sm">
+<form class="space-y-8" id="requestForm">
+<div class="relative group">
+<label class="block text-label-md font-bold text-primary mb-2" for="input-nome">Seu nome completo *</label>
+<input class="w-full px-4 py-3 rounded-lg border border-outline focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-body-lg bg-transparent" id="input-nome" placeholder="Ex: Maria Oliveira Silva" required type="text"/>
+</div>
+<div class="relative group">
+<label class="block text-label-md font-bold text-primary mb-2" for="input-email">Seu e-mail institucional *</label>
+<div class="relative">
+<input class="w-full px-4 py-3 rounded-lg border border-outline focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-body-lg bg-transparent" id="input-email" required type="email"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-error hidden" id="email-error-icon">error</span>
+</div>
+<p class="text-label-md text-error mt-1 hidden" id="email-error-text">Insira um e-mail válido</p>
+</div>
+<div class="relative group">
+<label class="block text-label-md font-bold text-primary mb-2">E-mails adicionais para convidar (opcional)</label>
+<div class="flex flex-wrap gap-2 mb-3" id="chip-container"></div>
+<div class="relative">
+<input class="w-full px-4 py-3 rounded-lg border border-outline focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-body-lg bg-transparent" id="email-input" placeholder="Pressione Enter para adicionar" type="text"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-outline">add</span>
+</div>
+</div>
+<label class="flex items-start gap-4 p-4 rounded-xl bg-surface-container-low border border-outline-variant cursor-pointer hover:bg-surface-container transition-colors">
+<input class="mt-1 w-5 h-5 rounded border-outline text-primary focus:ring-primary cursor-pointer" id="input-ciente" required type="checkbox"/>
+<span class="text-body-md text-on-surface">Estou ciente de que este agendamento será confirmado por e-mail e ficará registrado na agenda do estúdio.</span>
+</label>
+<div class="flex flex-col-reverse md:flex-row items-center justify-between gap-4 pt-4">
+<button class="text-primary font-label-lg text-label-lg px-8 py-3 hover:bg-surface-container-low rounded-full transition-all active:scale-95" data-action="back-to-horario" type="button">Voltar</button>
+<button class="w-full md:w-auto bg-primary text-on-primary font-label-lg text-label-lg px-12 py-3 rounded-full hover:shadow-md transition-all active:scale-95 shadow-sm" type="submit">Confirmar agendamento</button>
+</div>
+</form>
+</section>
+</main>
+
+<footer class="bg-surface-container-highest mt-20 border-t border-outline-variant">
+<div class="w-full py-8 px-margin-desktop flex flex-col md:flex-row justify-between items-center max-w-container-max-width mx-auto gap-6 text-center">
+<div class="flex flex-col items-center md:items-start gap-2">
+<span class="font-label-lg text-label-lg font-bold text-primary">Estúdio FMV</span>
+<p class="font-body-md text-body-md text-on-surface-variant">© 2026 Estúdio FMV. Todos os direitos reservados.</p>
+</div>
+</div>
+</footer>
+</section>
+
+<!-- ============================================================ -->
+<!-- VIEW 5: Confirmação de sucesso                               -->
+<!-- ============================================================ -->
+<section class="view" data-view="sucesso" id="view-sucesso">
+<main class="flex-grow flex flex-col items-center justify-center text-center px-margin-mobile md:px-margin-desktop py-16 max-w-container-max-width mx-auto min-h-screen">
+<div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-primary text-5xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-background mb-3">Agendamento confirmado!</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-md mb-10">Você receberá um e-mail de confirmação em instantes com todos os detalhes.</p>
+
+<div class="w-full bg-surface-container-low rounded-xl border border-outline-variant p-6 md:p-8 text-left mb-10 shadow-sm relative overflow-hidden max-w-xl">
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-8xl text-on-surface-variant">mic_external_on</span>
+</div>
+<h2 class="font-title-lg text-title-lg text-on-surface mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">receipt_long</span>
+Resumo do Agendamento
+</h2>
+<div class="grid grid-cols-1 gap-y-6 gap-x-12 relative z-10" id="resumo-final">
+  <!-- Resumo final completo é renderizado aqui via JS (renderResumoFinal) -->
+</div>
+</div>
+
+<div class="flex flex-col sm:flex-row gap-4 w-full justify-center">
+<button class="inline-flex items-center justify-center gap-2 px-8 h-12 rounded-full border border-outline text-primary font-label-lg text-label-lg hover:bg-surface-container-high transition-all active:scale-95 duration-200" data-action="novo-agendamento">
+<span class="material-symbols-outlined">add_circle</span>
+Fazer novo agendamento
+</button>
+</div>
+<p class="mt-12 font-body-md text-body-md text-on-surface-variant">
+Dúvidas sobre seu horário? <a class="text-primary font-bold hover:underline" href="#">Entre em contato com o suporte</a>.
+</p>
+</main>
+
+<footer class="bg-surface-container-highest w-full bottom-0">
+<div class="w-full py-8 px-margin-mobile md:px-margin-desktop flex flex-col items-center max-w-container-max-width mx-auto">
+<span class="font-label-lg text-label-lg font-bold text-primary mb-2">Estúdio FMV</span>
+<p class="font-body-md text-body-md text-on-surface-variant">© 2026 Estúdio FMV. Todos os direitos reservados.</p>
+</div>
+</footer>
+</section>
+
+<!-- ============================================================ -->
+<!-- JS: estado + navegação + mocks (Fase 4 troca mocks por dados reais) -->
+<!-- ============================================================ -->
+<script type="module">
+import { firebaseConfig } from "./firebase-config.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getDatabase(firebaseApp);
+
+(function () {
+  "use strict";
+
+  /* ---------------------------------------------------------------
+   * ESTADO GLOBAL DO AGENDAMENTO
+   * Isso é o que substitui "passar dados entre páginas". Cada view
+   * lê e escreve aqui. No Firebase (Fase 4) isso vira o payload
+   * enviado pra Cloud Function na hora de confirmar.
+   * ------------------------------------------------------------- */
+  const bookingState = {
+    tipoProducao: null,     // { id, nome, descricao, icone, campos: [...] }
+    camposPreenchidos: {},  // { campoId: valor }
+    data: null,             // "2026-11-06"
+    duracao: null,          // 1 | 2 | 3
+    horaInicio: null,       // "10:00"
+    nome: null,
+    email: null,
+    emailsAdicionais: []
+  };
+
+  /* ---------------------------------------------------------------
+   * CONTRATO DE DADOS COMPARTILHADO (Fase 3.5)
+   * Mesmo schema usado em admin.html — ver comentário equivalente lá.
+   * tipo de campo agora é sempre um destes 4 valores (snake_case/en),
+   * nunca mais os rótulos em PT com maiúscula que o admin usava antes.
+   * ------------------------------------------------------------- */
+  const FIELD_TYPES = {
+    TEXT: "text",
+    TEXTAREA: "textarea",
+    DATE: "date",
+    SELECT: "select"
+  };
+
+  /* ---------------------------------------------------------------
+   * DADOS MOCKADOS
+   * Fase 4 substitui isso por leitura do Firebase Realtime Database
+   * (tipos de produção) e do Google Calendar (disponibilidade real).
+   * "campos" no schema único (Fase 3.5): tipo em snake_case/en, id
+   * estável — mesmo formato gravado pelo construtor de campos do admin.
+   * ------------------------------------------------------------- */
+  const SEED_TIPOS_PRODUCAO = [
+    {
+      id: "videoaula-medicina",
+      nome: "Videoaula — Medicina",
+      descricao: "Gravações para o curso de Medicina",
+      icone: "school",
+      ativo: true,
+      campos: [
+        { id: "unidade_curricular", label: "Unidade curricular", tipo: FIELD_TYPES.TEXT, obrigatorio: true, ajuda: "Ex: Farmacologia Clínica" },
+        { id: "atividade_curricular", label: "Atividade curricular", tipo: FIELD_TYPES.TEXT, obrigatorio: true },
+        { id: "nome_aula", label: "Nome da aula", tipo: FIELD_TYPES.TEXT, obrigatorio: true },
+        { id: "dia_aula_presencial", label: "Dia da aula presencial", tipo: FIELD_TYPES.DATE, obrigatorio: false }
+      ]
+    },
+    {
+      id: "institucional",
+      nome: "Gravação institucional",
+      descricao: "Conteúdo para setores do hospital",
+      icone: "business",
+      ativo: true,
+      campos: [
+        { id: "setor_solicitante", label: "Setor solicitante", tipo: FIELD_TYPES.TEXT, obrigatorio: true },
+        { id: "responsavel_setor", label: "Responsável pelo setor", tipo: FIELD_TYPES.TEXT, obrigatorio: true },
+        { id: "descricao_gravacao", label: "Descrição da gravação", tipo: FIELD_TYPES.TEXTAREA, obrigatorio: false }
+      ]
+    },
+    {
+      id: "outras-areas",
+      nome: "Outras áreas da faculdade",
+      descricao: "Demandas diversas de produção",
+      icone: "videocam",
+      ativo: false,
+      campos: [
+        { id: "area_solicitante", label: "Área solicitante", tipo: FIELD_TYPES.TEXT, obrigatorio: true },
+        { id: "descricao_demanda", label: "Descreva a demanda", tipo: FIELD_TYPES.TEXTAREA, obrigatorio: true }
+      ]
+    }
+  ];
+  let MOCK_TIPOS_PRODUCAO = [];
+
+  /* ---------------------------------------------------------------
+   * CONFIGURAÇÕES GERAIS (grade de horários) — Fase 3.5
+   * Mesmo objeto que existe em admin.html → Configurações Gerais.
+   * Antes o público ignorava isso e usava HORARIOS_POSSIVEIS fixo.
+   * Fase 4: isso vira uma leitura do nó "configuracoes" no Realtime
+   * Database (o mesmo nó que o admin escreve ao salvar a tela).
+   * ------------------------------------------------------------- */
+  const SEED_CONFIGURACOES = {
+    diasFuncionamento: [1, 2, 3, 4, 5], // 0=Dom .. 6=Sáb
+    manhaInicio: "09:00",
+    manhaFim: "12:00",
+    tardeInicio: "14:00",
+    tardeFim: "17:00"
+  };
+  let MOCK_CONFIGURACOES = Object.assign({}, SEED_CONFIGURACOES);
+
+  // Horários mockados ocupados por data (simulando resposta do Google Calendar
+  // freebusy). Populado com alguns exemplos pra dar pra testar visualmente o
+  // estado "horário ocupado" sem precisar editar o objeto manualmente
+  // (antes ficava vazio {} e esse estado nunca aparecia no protótipo).
+  const MOCK_OCUPADOS = {
+    // formato: "YYYY-MM-DD": [{ inicio: "HH:MM", fim: "HH:MM" }]
+    "2026-11-06": [{ inicio: "10:00", fim: "12:00" }],
+    "2026-11-09": [{ inicio: "09:00", fim: "10:00" }, { inicio: "15:00", fim: "17:00" }]
+  };
+
+  // Gera a grade de horários possíveis de início dinamicamente, a partir da
+  // configuração (início/fim manhã e tarde) e da duração escolhida — em vez
+  // da lista fixa de 6 horários hardcoded que ignorava tanto a configuração
+  // quanto o caso de sessões de 2h/3h perto do fim do turno.
+  function gerarGradeHorarios(duracaoHoras) {
+    const passoMin = 60; // granularidade dos horários de início: de hora em hora
+    const periodos = [
+      { inicio: MOCK_CONFIGURACOES.manhaInicio, fim: MOCK_CONFIGURACOES.manhaFim },
+      { inicio: MOCK_CONFIGURACOES.tardeInicio, fim: MOCK_CONFIGURACOES.tardeFim }
+    ];
+    const horarios = [];
+    periodos.forEach(function (periodo) {
+      const inicioMin = paraMinutos(periodo.inicio);
+      const fimMin = paraMinutos(periodo.fim);
+      for (let m = inicioMin; m + duracaoHoras * 60 <= fimMin; m += passoMin) {
+        horarios.push(String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0"));
+      }
+    });
+    return horarios;
+  }
+
+  // Checa se um dia da semana (0=Dom..6=Sáb) está habilitado na grade
+  function diaFuncionamentoHabilitado(diaSemana) {
+    return MOCK_CONFIGURACOES.diasFuncionamento.indexOf(diaSemana) !== -1;
+  }
+
+  /* ---------------------------------------------------------------
+   * NAVEGAÇÃO ENTRE VIEWS
+   * ------------------------------------------------------------- */
+  function irPara(viewName) {
+    document.querySelectorAll(".view").forEach(function (el) {
+      el.classList.toggle("active", el.dataset.view === viewName);
+    });
+    window.scrollTo(0, 0);
+  }
+
+  /* ---------------------------------------------------------------
+   * VIEW 1 — Seleção de tipo de produção
+   * ------------------------------------------------------------- */
+  function renderProductionTypes() {
+    const container = document.getElementById("production-type-list");
+    const tiposAtivos = MOCK_TIPOS_PRODUCAO.filter(function (t) { return t.ativo !== false; });
+
+    if (tiposAtivos.length === 0) {
+      container.innerHTML = '<p class="text-center font-body-md text-body-md text-on-surface-variant py-8">Nenhum tipo de produção disponível no momento.</p>';
+      return;
+    }
+
+    container.innerHTML = tiposAtivos.map(function (tipo) {
+      return (
+        '<button class="studio-card w-full text-left bg-surface-container-low border border-outline-variant rounded-xl p-6 flex items-center gap-6 transition-all duration-200 group active:scale-[0.98] hover:border-primary" data-tipo-id="' + tipo.id + '">' +
+          '<div class="w-14 h-14 rounded-xl bg-secondary-container flex items-center justify-center text-on-secondary-container">' +
+            '<span class="material-symbols-outlined text-[32px]">' + tipo.icone + '</span>' +
+          '</div>' +
+          '<div class="flex-grow">' +
+            '<h3 class="font-title-lg text-title-lg text-on-surface group-hover:text-primary transition-colors">' + tipo.nome + '</h3>' +
+            '<p class="font-body-md text-body-md text-on-surface-variant">' + (tipo.descricao || "") + '</p>' +
+          '</div>' +
+          '<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">chevron_right</span>' +
+        '</button>'
+      );
+    }).join("");
+
+    container.querySelectorAll("[data-tipo-id]").forEach(function (card) {
+      card.addEventListener("click", function () {
+        const tipo = MOCK_TIPOS_PRODUCAO.find(function (t) { return t.id === card.dataset.tipoId; });
+        selecionarTipoProducao(tipo);
+      });
+    });
+  }
+
+  function selecionarTipoProducao(tipo) {
+    bookingState.tipoProducao = tipo;
+    bookingState.camposPreenchidos = {};
+    document.getElementById("detalhes-titulo").textContent = tipo.nome;
+    document.getElementById("resumo-tipo-producao").textContent = tipo.nome;
+    renderCamposDinamicos();
+    irPara("detalhes");
+  }
+
+  /* ---------------------------------------------------------------
+   * VIEW 2 — Campos dinâmicos do tipo de produção selecionado
+   * ------------------------------------------------------------- */
+  function renderCamposDinamicos() {
+    const container = document.getElementById("campos-dinamicos");
+    const campos = bookingState.tipoProducao.campos;
+
+    container.innerHTML = campos.map(function (campo) {
+      const reqLabel = campo.obrigatorio ? " *" : "";
+      const ajuda = campo.ajuda ? '<p class="text-label-md font-label-md text-on-surface-variant ml-2">' + campo.ajuda + '</p>' : "";
+
+      if (campo.tipo === FIELD_TYPES.DATE) {
+        return (
+          '<div class="floating-label-group relative">' +
+            '<input class="w-full h-14 px-4 pr-12 border border-outline rounded-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all bg-transparent font-body-lg text-body-lg" data-campo-id="' + campo.id + '" id="campo-' + campo.id + '" placeholder=" " type="date"/>' +
+            '<label class="font-body-md text-on-surface-variant" for="campo-' + campo.id + '">' + campo.label + reqLabel + '</label>' +
+          '</div>'
+        );
+      }
+
+      if (campo.tipo === FIELD_TYPES.SELECT) {
+        const opcoesHtml = (campo.opcoes || []).map(function (op) {
+          return '<option value="' + op + '">' + op + '</option>';
+        }).join("");
+        return (
+          '<div class="space-y-1">' +
+            '<label class="font-body-md text-on-surface-variant block mb-1" for="campo-' + campo.id + '">' + campo.label + reqLabel + '</label>' +
+            '<select class="w-full h-14 px-4 border border-outline rounded-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all bg-transparent font-body-lg text-body-lg" data-campo-id="' + campo.id + '" id="campo-' + campo.id + '"' + (campo.obrigatorio ? " required" : "") + '>' +
+              '<option value="" disabled selected>Selecione uma opção</option>' +
+              opcoesHtml +
+            '</select>' +
+          '</div>'
+        );
+      }
+
+      if (campo.tipo === FIELD_TYPES.TEXTAREA) {
+        return (
+          '<div class="space-y-1">' +
+            '<div class="floating-label-group">' +
+              '<textarea class="w-full min-h-[112px] px-4 pt-4 border border-outline rounded-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all bg-transparent font-body-lg text-body-lg" data-campo-id="' + campo.id + '" id="campo-' + campo.id + '" placeholder=" "' + (campo.obrigatorio ? " required" : "") + '></textarea>' +
+              '<label class="font-body-md text-on-surface-variant" for="campo-' + campo.id + '">' + campo.label + reqLabel + '</label>' +
+            '</div>' +
+            ajuda +
+          '</div>'
+        );
+      }
+
+      return (
+        '<div class="space-y-1">' +
+          '<div class="floating-label-group">' +
+            '<input class="w-full h-14 px-4 border border-outline rounded-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all bg-transparent font-body-lg text-body-lg" data-campo-id="' + campo.id + '" id="campo-' + campo.id + '" placeholder=" " type="text"' + (campo.obrigatorio ? " required" : "") + '/>' +
+            '<label class="font-body-md text-on-surface-variant" for="campo-' + campo.id + '">' + campo.label + reqLabel + '</label>' +
+          '</div>' +
+          ajuda +
+        '</div>'
+      );
+    }).join("");
+  }
+
+  document.getElementById("form-detalhes").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const campos = bookingState.tipoProducao.campos;
+    let valido = true;
+
+    campos.forEach(function (campo) {
+      const el = document.getElementById("campo-" + campo.id);
+      const valor = el.value.trim();
+      if (campo.obrigatorio && !valor) valido = false;
+      bookingState.camposPreenchidos[campo.id] = valor;
+    });
+
+    if (!valido) {
+      alert("Preencha todos os campos obrigatórios.");
+      return;
+    }
+
+    resetSelecaoHorario();
+    renderCalendario();
+    irPara("horario");
+  });
+
+  /* ---------------------------------------------------------------
+   * VIEW 3 — Seleção de horário (calendário + duração + slots)
+   * ------------------------------------------------------------- */
+  let calendarioMesAtual = new Date(2026, 10, 1); // Novembro 2026 (mês de referência do mock)
+  const MESES_PT = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+  const DIAS_SEMANA_PT = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+
+  function resetSelecaoHorario() {
+    bookingState.data = null;
+    bookingState.duracao = null;
+    bookingState.horaInicio = null;
+    document.getElementById("horarios-titulo").textContent = "Selecione uma data no calendário";
+    document.getElementById("horarios-grid").innerHTML = "";
+    document.querySelectorAll("#duracao-buttons button").forEach(function (b) {
+      b.classList.remove("bg-secondary-container", "text-on-secondary-container");
+      b.innerHTML = b.dataset.duracao + (b.dataset.duracao === "1" ? " hora" : " horas");
+    });
+    atualizarResumoSelecao();
+  }
+
+  function formatarDataISO(date) {
+    return date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0");
+  }
+
+  function renderCalendario() {
+    document.getElementById("calendario-mes-ano").textContent = MESES_PT[calendarioMesAtual.getMonth()] + " " + calendarioMesAtual.getFullYear();
+
+    const grid = document.getElementById("calendario-dias");
+    grid.innerHTML = "";
+
+    const primeiroDia = new Date(calendarioMesAtual.getFullYear(), calendarioMesAtual.getMonth(), 1);
+    const ultimoDia = new Date(calendarioMesAtual.getFullYear(), calendarioMesAtual.getMonth() + 1, 0);
+    const offsetInicial = primeiroDia.getDay(); // 0 = domingo
+
+    // Dias vazios/desabilitados antes do dia 1
+    for (let i = 0; i < offsetInicial; i++) {
+      grid.innerHTML += '<span class="disabled-day py-2"></span>';
+    }
+
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+
+    for (let dia = 1; dia <= ultimoDia.getDate(); dia++) {
+      const dataObj = new Date(calendarioMesAtual.getFullYear(), calendarioMesAtual.getMonth(), dia);
+      const diaSemana = dataObj.getDay();
+      const diaIndisponivel = !diaFuncionamentoHabilitado(diaSemana);
+      const isPassado = dataObj < hoje;
+      const isoStr = formatarDataISO(dataObj);
+      const isSelecionado = bookingState.data === isoStr;
+
+      if (diaIndisponivel || isPassado) {
+        grid.innerHTML += '<span class="disabled-day py-2">' + dia + '</span>';
+      } else {
+        const classesExtra = isSelecionado
+          ? " bg-primary text-on-primary font-bold shadow-md"
+          : " hover:bg-secondary-container/20";
+        grid.innerHTML +=
+          '<button class="py-2 rounded-full transition-colors font-body-md text-body-md' + classesExtra + '" data-data="' + isoStr + '">' + dia + '</button>';
+      }
+    }
+
+    grid.querySelectorAll("[data-data]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        bookingState.data = btn.dataset.data;
+        renderCalendario();
+        renderHorarios();
+        atualizarResumoSelecao();
+      });
+    });
+  }
+
+  document.querySelector('[data-action="mes-anterior"]').addEventListener("click", function () {
+    calendarioMesAtual = new Date(calendarioMesAtual.getFullYear(), calendarioMesAtual.getMonth() - 1, 1);
+    renderCalendario();
+  });
+  document.querySelector('[data-action="mes-proximo"]').addEventListener("click", function () {
+    calendarioMesAtual = new Date(calendarioMesAtual.getFullYear(), calendarioMesAtual.getMonth() + 1, 1);
+    renderCalendario();
+  });
+
+  document.querySelectorAll("#duracao-buttons button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      bookingState.duracao = parseInt(btn.dataset.duracao, 10);
+      bookingState.horaInicio = null; // duração mudou, obriga reescolher horário
+
+      document.querySelectorAll("#duracao-buttons button").forEach(function (b) {
+        b.classList.remove("bg-secondary-container", "text-on-secondary-container");
+        b.innerHTML = b.dataset.duracao + (b.dataset.duracao === "1" ? " hora" : " horas");
+      });
+      btn.classList.add("bg-secondary-container", "text-on-secondary-container");
+      btn.innerHTML =
+        '<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: \'FILL\' 1;">check</span>' +
+        btn.dataset.duracao + (btn.dataset.duracao === "1" ? " hora" : " horas");
+
+      renderHorarios();
+      atualizarResumoSelecao();
+    });
+  });
+
+  // Converte "HH:MM" em minutos desde 00:00, pra facilitar checagem de sobreposição
+  function paraMinutos(hhmm) {
+    const partes = hhmm.split(":");
+    return parseInt(partes[0], 10) * 60 + parseInt(partes[1], 10);
+  }
+
+  // Checa se o intervalo [inicio, inicio+duracao) cabe sem esbarrar em nenhum
+  // intervalo ocupado nem ultrapassar o fim do período de trabalho — limites
+  // lidos de MOCK_CONFIGURACOES (Fase 4: config real vinda do Firebase),
+  // não mais hardcoded como 12h/14h/17h.
+  function horarioDisponivel(horaInicioStr, duracaoHoras, ocupados) {
+    const inicioMin = paraMinutos(horaInicioStr);
+    const fimMin = inicioMin + duracaoHoras * 60;
+
+    const noPeriodoManha = inicioMin >= paraMinutos(MOCK_CONFIGURACOES.manhaInicio) && fimMin <= paraMinutos(MOCK_CONFIGURACOES.manhaFim);
+    const noPeriodoTarde = inicioMin >= paraMinutos(MOCK_CONFIGURACOES.tardeInicio) && fimMin <= paraMinutos(MOCK_CONFIGURACOES.tardeFim);
+    if (!noPeriodoManha && !noPeriodoTarde) return false;
+
+    for (let i = 0; i < ocupados.length; i++) {
+      const ocupadoInicio = paraMinutos(ocupados[i].inicio);
+      const ocupadoFim = paraMinutos(ocupados[i].fim);
+      const sobrepoe = inicioMin < ocupadoFim && fimMin > ocupadoInicio;
+      if (sobrepoe) return false;
+    }
+    return true;
+  }
+
+  function renderHorarios() {
+    const titulo = document.getElementById("horarios-titulo");
+    const grid = document.getElementById("horarios-grid");
+
+    if (!bookingState.data) {
+      titulo.textContent = "Selecione uma data no calendário";
+      grid.innerHTML = "";
+      return;
+    }
+    if (!bookingState.duracao) {
+      titulo.textContent = "Escolha a duração da sessão";
+      grid.innerHTML = "";
+      return;
+    }
+
+    const dataObj = new Date(bookingState.data + "T00:00:00");
+    const nomeDiaSemana = DIAS_SEMANA_PT[dataObj.getDay()];
+    const diaMes = dataObj.getDate();
+    const mesNome = MESES_PT[dataObj.getMonth()];
+    titulo.textContent = "Horários disponíveis para " + nomeDiaSemana + ", " + diaMes + " de " + mesNome.slice(0, 3);
+
+    // No Firebase (Fase 4) isso vira: await calendarAPI.freebusy(bookingState.data)
+    const ocupados = MOCK_OCUPADOS[bookingState.data] || [];
+
+    // Grade gerada dinamicamente a partir da config + duração escolhida —
+    // não mais a lista fixa de 6 horários que ignorava o fim do turno
+    // (ex: 16h só cabe 1h antes de bater 17h, mas antes ficava selecionável
+    // mesmo para sessões de 2h/3h).
+    const horariosPossiveis = gerarGradeHorarios(bookingState.duracao);
+
+    if (horariosPossiveis.length === 0) {
+      titulo.textContent = "Nenhum horário comporta essa duração na grade configurada";
+      grid.innerHTML = "";
+      return;
+    }
+
+    grid.innerHTML = horariosPossiveis.map(function (hora) {
+      const disponivel = horarioDisponivel(hora, bookingState.duracao, ocupados);
+      const isSelecionado = bookingState.horaInicio === hora;
+
+      if (!disponivel) {
+        return (
+          '<div class="flex flex-col items-center justify-center p-6 border-2 border-surface-container-high bg-surface-container-low rounded-xl cursor-not-allowed opacity-60">' +
+            '<span class="material-symbols-outlined text-outline-variant mb-1">lock</span>' +
+            '<span class="font-title-lg text-title-lg text-outline-variant line-through">' + hora + '</span>' +
+            '<span class="font-label-sm text-label-sm text-outline-variant">Ocupado</span>' +
+          '</div>'
+        );
+      }
+
+      if (isSelecionado) {
+        return (
+          '<button class="transition-chip flex flex-col items-center justify-center p-6 border-2 border-primary bg-primary-container/10 rounded-xl relative overflow-hidden" data-hora="' + hora + '">' +
+            '<div class="absolute top-2 right-2"><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: \'FILL\' 1;">check_circle</span></div>' +
+            '<span class="font-title-lg text-title-lg text-primary font-bold">' + hora + '</span>' +
+            '<span class="font-label-sm text-label-sm text-primary font-medium">Selecionado</span>' +
+          '</button>'
+        );
+      }
+
+      return (
+        '<button class="transition-chip group flex flex-col items-center justify-center p-6 border-2 border-outline-variant rounded-xl hover:border-primary hover:bg-primary/5" data-hora="' + hora + '">' +
+          '<span class="font-title-lg text-title-lg text-primary group-hover:scale-110 transition-transform">' + hora + '</span>' +
+          '<span class="font-label-sm text-label-sm text-outline group-hover:text-primary">Disponível</span>' +
+        '</button>'
+      );
+    }).join("");
+
+    grid.querySelectorAll("[data-hora]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        bookingState.horaInicio = btn.dataset.hora;
+        renderHorarios();
+        atualizarResumoSelecao();
+      });
+    });
+  }
+
+  function atualizarResumoSelecao() {
+    const resumoEl = document.getElementById("resumo-selecao");
+    const btnContinuar = document.getElementById("btn-continuar-horario");
+
+    if (bookingState.data && bookingState.duracao && bookingState.horaInicio) {
+      const dataObj = new Date(bookingState.data + "T00:00:00");
+      const diaMes = dataObj.getDate();
+      const mesNome = MESES_PT[dataObj.getMonth()];
+      const inicioMin = paraMinutos(bookingState.horaInicio);
+      const fimMin = inicioMin + bookingState.duracao * 60;
+      const horaFim = String(Math.floor(fimMin / 60)).padStart(2, "0") + ":" + String(fimMin % 60).padStart(2, "0");
+
+      resumoEl.textContent = diaMes + " de " + mesNome + " • " + bookingState.horaInicio + " — " + horaFim;
+      btnContinuar.disabled = false;
+    } else {
+      resumoEl.textContent = "Selecione data, duração e horário";
+      btnContinuar.disabled = true;
+    }
+  }
+
+  document.querySelector('[data-action="continuar-para-dados"]').addEventListener("click", function () {
+    if (!bookingState.data || !bookingState.duracao || !bookingState.horaInicio) return;
+    renderResumoDados();
+    irPara("dados");
+  });
+
+  /* ---------------------------------------------------------------
+   * VIEW 4 — Dados do solicitante
+   * ------------------------------------------------------------- */
+  function renderResumoDados() {
+    const container = document.getElementById("resumo-agendamento-dados");
+    const dataObj = new Date(bookingState.data + "T00:00:00");
+    const diaMes = dataObj.getDate();
+    const mesNome = MESES_PT[dataObj.getMonth()];
+    const inicioMin = paraMinutos(bookingState.horaInicio);
+    const fimMin = inicioMin + bookingState.duracao * 60;
+    const horaFim = String(Math.floor(fimMin / 60)).padStart(2, "0") + ":" + String(fimMin % 60).padStart(2, "0");
+
+    let camposHtml = "";
+    bookingState.tipoProducao.campos.forEach(function (campo) {
+      const valor = bookingState.camposPreenchidos[campo.id];
+      if (valor) {
+        camposHtml +=
+          '<div class="flex items-start gap-4">' +
+            '<span class="material-symbols-outlined text-on-surface-variant mt-1">description</span>' +
+            '<div><p class="text-label-md text-on-surface-variant">' + campo.label + '</p>' +
+            '<p class="text-body-lg font-bold text-on-surface">' + valor + '</p></div>' +
+          '</div>';
+      }
+    });
+
+    container.innerHTML =
+      '<div class="flex items-center gap-4">' +
+        '<div class="w-12 h-12 rounded-lg bg-secondary-container flex items-center justify-center text-on-secondary-container">' +
+          '<span class="material-symbols-outlined">video_camera_back</span>' +
+        '</div>' +
+        '<div><p class="text-label-md text-on-surface-variant">Tipo de Produção</p>' +
+        '<p class="text-body-lg font-bold text-on-surface">' + bookingState.tipoProducao.nome + '</p></div>' +
+      '</div>' +
+      '<div class="flex items-center gap-4">' +
+        '<div class="w-12 h-12 rounded-lg bg-secondary-container flex items-center justify-center text-on-secondary-container">' +
+          '<span class="material-symbols-outlined">event</span>' +
+        '</div>' +
+        '<div><p class="text-label-md text-on-surface-variant">Data e Horário</p>' +
+        '<p class="text-body-lg font-bold text-on-surface">' + diaMes + ' de ' + mesNome + ' • ' + bookingState.horaInicio + ' — ' + horaFim + '</p></div>' +
+      '</div>' +
+      camposHtml;
+  }
+
+  // Validação de e-mail
+  function validarEmail(email) {
+    return /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email);
+  }
+
+  const inputEmail = document.getElementById("input-email");
+  inputEmail.addEventListener("blur", function () {
+    const valido = inputEmail.value === "" || validarEmail(inputEmail.value);
+    document.getElementById("email-error-icon").classList.toggle("hidden", valido);
+    document.getElementById("email-error-text").classList.toggle("hidden", valido);
+    inputEmail.classList.toggle("border-error", !valido);
+    inputEmail.classList.toggle("border-2", !valido);
+  });
+
+  // Chip input de e-mails adicionais
+  const emailInput = document.getElementById("email-input");
+  const chipContainer = document.getElementById("chip-container");
+
+  function renderChips() {
+    chipContainer.innerHTML = bookingState.emailsAdicionais.map(function (email, idx) {
+      return (
+        '<div class="flex items-center gap-2 bg-secondary-container text-on-secondary-container px-3 py-1.5 rounded-full text-label-md font-medium group/chip transition-all hover:bg-secondary">' +
+          email +
+          '<span class="material-symbols-outlined text-[16px] cursor-pointer" data-remove-idx="' + idx + '">close</span>' +
+        '</div>'
+      );
+    }).join("");
+
+    chipContainer.querySelectorAll("[data-remove-idx]").forEach(function (span) {
+      span.addEventListener("click", function () {
+        bookingState.emailsAdicionais.splice(parseInt(span.dataset.removeIdx, 10), 1);
+        renderChips();
+      });
+    });
+  }
+
+  emailInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && emailInput.value.trim() !== "") {
+      e.preventDefault();
+      const email = emailInput.value.trim();
+      if (validarEmail(email)) {
+        bookingState.emailsAdicionais.push(email);
+        renderChips();
+        emailInput.value = "";
+      }
+    }
+  });
+
+  document.getElementById("requestForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const nome = document.getElementById("input-nome").value.trim();
+    const email = document.getElementById("input-email").value.trim();
+    const ciente = document.getElementById("input-ciente").checked;
+
+    if (!nome || !email || !validarEmail(email) || !ciente) {
+      alert("Preencha nome, e-mail válido e confirme que está ciente antes de continuar.");
+      return;
+    }
+
+    bookingState.nome = nome;
+    bookingState.email = email;
+
+    // Fase 4: aqui entra a chamada real pra Cloud Function que:
+    // 1) cria o evento no Google Calendar (com attendees = email + emailsAdicionais + convidados fixos do tipo)
+    // 2) dispara o e-mail de confirmação via Gmail API
+    // 3) registra o log no Firebase Realtime Database
+    console.log("Enviando agendamento:", bookingState);
+
+    renderResumoFinal();
+    irPara("sucesso");
+  });
+
+  /* ---------------------------------------------------------------
+   * VIEW 5 — Confirmação de sucesso
+   * ------------------------------------------------------------- */
+  function renderResumoFinal() {
+    const container = document.getElementById("resumo-final");
+    const dataObj = new Date(bookingState.data + "T00:00:00");
+    const diaMes = dataObj.getDate();
+    const mesNome = MESES_PT[dataObj.getMonth()];
+    const inicioMin = paraMinutos(bookingState.horaInicio);
+    const fimMin = inicioMin + bookingState.duracao * 60;
+    const horaFim = String(Math.floor(fimMin / 60)).padStart(2, "0") + ":" + String(fimMin % 60).padStart(2, "0");
+
+    const todosEmails = [bookingState.email].concat(bookingState.emailsAdicionais);
+    const emailsHtml = todosEmails.map(function (email) {
+      return (
+        '<div class="flex items-center gap-1.5 px-3 py-1 border border-outline rounded-full font-label-md text-label-md text-on-surface">' +
+          '<span class="material-symbols-outlined text-[16px]">alternate_email</span>' + email +
+        '</div>'
+      );
+    }).join("");
+
+    container.innerHTML =
+      '<div class="space-y-3">' +
+        '<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Tipo de produção</span>' +
+        '<p class="text-body-lg font-bold text-on-surface">' + bookingState.tipoProducao.nome + '</p>' +
+      '</div>' +
+      '<div class="space-y-3">' +
+        '<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Data e horário</span>' +
+        '<p class="text-body-lg font-bold text-on-surface">' + diaMes + ' de ' + mesNome + ' • ' + bookingState.horaInicio + ' — ' + horaFim + '</p>' +
+      '</div>' +
+      '<div class="space-y-3 md:col-span-2">' +
+        '<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Confirmação enviada para</span>' +
+        '<div class="flex flex-wrap gap-2">' + emailsHtml + '</div>' +
+      '</div>';
+  }
+
+  document.querySelector('[data-action="novo-agendamento"]').addEventListener("click", function () {
+    bookingState.tipoProducao = null;
+    bookingState.camposPreenchidos = {};
+    bookingState.data = null;
+    bookingState.duracao = null;
+    bookingState.horaInicio = null;
+    bookingState.nome = null;
+    bookingState.email = null;
+    bookingState.emailsAdicionais = [];
+
+    document.getElementById("requestForm").reset();
+    document.getElementById("chip-container").innerHTML = "";
+    irPara("tipo");
+  });
+
+  /* ---------------------------------------------------------------
+   * Botões "Voltar" que só trocam de view (sem lógica extra)
+   * ------------------------------------------------------------- */
+  document.querySelectorAll('[data-action="back-to-tipo"]').forEach(function (btn) {
+    btn.addEventListener("click", function () { irPara("tipo"); });
+  });
+  document.querySelectorAll('[data-action="back-to-detalhes"]').forEach(function (btn) {
+    btn.addEventListener("click", function () { irPara("detalhes"); });
+  });
+  document.querySelectorAll('[data-action="back-to-horario"]').forEach(function (btn) {
+    btn.addEventListener("click", function () { irPara("horario"); });
+  });
+
+  /* ---------------------------------------------------------------
+   * FIREBASE — leitura pública (somente leitura) de tiposProducao e
+   * configuracoes. Estes dados são visíveis a qualquer visitante da
+   * página pública, então a regra de segurança do banco deve permitir
+   * leitura anônima destes dois nós especificamente.
+   * ------------------------------------------------------------- */
+  function objetoDbParaTipos(obj) {
+    if (!obj) return [];
+    return Object.keys(obj).map(function (id) {
+      return Object.assign({ id: id }, obj[id]);
+    });
+  }
+
+  async function carregarDadosPublicos() {
+    const container = document.getElementById("production-type-list");
+    container.innerHTML = '<p class="text-center font-body-md text-body-md text-on-surface-variant py-8">Carregando tipos de produção…</p>';
+
+    try {
+      const [snapTipos, snapConfig] = await Promise.all([
+        get(ref(db, "tiposProducao")),
+        get(ref(db, "configuracoes"))
+      ]);
+
+      MOCK_TIPOS_PRODUCAO = snapTipos.exists()
+        ? objetoDbParaTipos(snapTipos.val())
+        : SEED_TIPOS_PRODUCAO.map(function (t) { return Object.assign({}, t); });
+
+      MOCK_CONFIGURACOES = snapConfig.exists()
+        ? Object.assign({}, SEED_CONFIGURACOES, snapConfig.val())
+        : Object.assign({}, SEED_CONFIGURACOES);
+    } catch (err) {
+      console.error("Erro ao carregar dados do Firebase:", err);
+      // Mantém os dados de semente como fallback pra não deixar a
+      // página pública completamente quebrada se o banco falhar.
+      MOCK_TIPOS_PRODUCAO = SEED_TIPOS_PRODUCAO.map(function (t) { return Object.assign({}, t); });
+      MOCK_CONFIGURACOES = Object.assign({}, SEED_CONFIGURACOES);
+    }
+
+    renderProductionTypes();
+  }
+
+  /* ---------------------------------------------------------------
+   * INIT
+   * ------------------------------------------------------------- */
+  carregarDadosPublicos();
+})();
+</script>
+</body>
+</html>
