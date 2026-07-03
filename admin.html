@@ -827,7 +827,8 @@ const googleProvider = new GoogleAuthProvider();
     logado: false,
     subviewAtual: "dashboard",
     editandoTipoId: null, // quando != null, o construtor de campos está em modo edição
-    emailAdmin: null
+    emailAdmin: null,
+    uidAdmin: null
   };
 
   // Primeiro admin, criado automaticamente se o nó "admins" estiver vazio
@@ -1071,16 +1072,31 @@ const googleProvider = new GoogleAuthProvider();
     await remove(ref(db, "excecoes/" + id));
   }
 
-  async function checarAdmin(email) {
+  async function checarAdmin(uid, email) {
     const adminsRef = ref(db, "admins");
     const snapTodos = await get(adminsRef);
-    if (!snapTodos.exists()) {
+    if (!snapTodos.exists() && email === SEED_ADMIN_EMAIL) {
       // Primeiro acesso: nó "admins" vazio. Semeia com o admin inicial
-      // combinado, pra não travar o painel numa situação sem saída.
-      await set(ref(db, "admins/" + emailParaChave(SEED_ADMIN_EMAIL)), SEED_ADMIN_EMAIL);
+      // combinado (chave = UID, valor = e-mail p/ exibição), pra não
+      // travar o painel numa situação sem saída.
+      await set(ref(db, "admins/" + uid), email);
+      return true;
     }
-    const snap = await get(ref(db, "admins/" + emailParaChave(email)));
-    return snap.exists() && !!snap.val();
+    const snap = await get(ref(db, "admins/" + uid));
+    if (snap.exists() && !!snap.val()) return true;
+
+    // Não é admin confirmado ainda — checa se o e-mail está na lista de
+    // convites pendentes (adicionados pelo painel antes do primeiro
+    // login dessa pessoa). Se sim, promove pra admin confirmado agora
+    // que já temos o UID real dela.
+    const chaveEmail = emailParaChave(email);
+    const snapConvite = await get(ref(db, "adminsConvidados/" + chaveEmail));
+    if (snapConvite.exists()) {
+      await set(ref(db, "admins/" + uid), email);
+      await remove(ref(db, "adminsConvidados/" + chaveEmail));
+      return true;
+    }
+    return false;
   }
 
   // Carrega todos os dados administrativos do Firebase de uma vez,
@@ -1116,7 +1132,8 @@ const googleProvider = new GoogleAuthProvider();
     try {
       const resultado = await signInWithPopup(auth, googleProvider);
       const email = resultado.user.email;
-      const ehAdmin = await checarAdmin(email);
+      const uid = resultado.user.uid;
+      const ehAdmin = await checarAdmin(uid, email);
       if (!ehAdmin) {
         await signOut(auth);
         mostrarErroLogin(
@@ -1129,6 +1146,7 @@ const googleProvider = new GoogleAuthProvider();
       await carregarDadosAdmin();
       adminState.logado = true;
       adminState.emailAdmin = email;
+      adminState.uidAdmin = uid;
       setLoginLoading(false);
       irPara("admin-shell");
       irParaSubview("dashboard");
@@ -1154,11 +1172,12 @@ const googleProvider = new GoogleAuthProvider();
   // página), reidrata o painel sem exigir novo clique em "Entrar".
   onAuthStateChanged(auth, async function (user) {
     if (!user || adminState.logado) return;
-    const ehAdmin = await checarAdmin(user.email);
+    const ehAdmin = await checarAdmin(user.uid, user.email);
     if (!ehAdmin) return;
     await carregarDadosAdmin();
     adminState.logado = true;
     adminState.emailAdmin = user.email;
+    adminState.uidAdmin = user.uid;
     carregarFormAdministradores();
     irPara("admin-shell");
     irParaSubview("dashboard");
@@ -1763,36 +1782,53 @@ const googleProvider = new GoogleAuthProvider();
   }
 
   /* ---------------------------------------------------------------
-   * ADMINISTRADORES — nó "admins" do Realtime Database
-   * Chave = e-mail normalizado (emailParaChave), valor = true.
-   * Regra de segurança do banco: só quem já está nesse nó pode ler/
-   * escrever tiposProducao/configuracoes/excecoes/admins (ver as
-   * Database Rules sugeridas separadamente).
+   * ADMINISTRADORES — dois nós no Realtime Database:
+   *  - "admins/<uid>" = admin confirmado (já logou pelo menos 1 vez),
+   *    valor = e-mail (só para exibição). UID vem do Firebase Auth,
+   *    nunca tem caractere especial — chave 100% estável.
+   *  - "adminsConvidados/<email_normalizado>" = convite pendente,
+   *    criado quando você adiciona um e-mail que ainda não logou.
+   *    Some automaticamente (é promovido pra "admins") no primeiro
+   *    login dessa pessoa (ver checarAdmin).
+   * Regra de segurança do banco: só quem já está em "admins" pode ler/
+   * escrever tiposProducao/configuracoes/excecoes/admins/adminsConvidados
+   * (ver as Database Rules).
    * ------------------------------------------------------------- */
   async function renderListaAdmins() {
     const container = document.getElementById("admin-lista");
     container.innerHTML = '<p class="p-4 font-body-md text-body-md text-on-surface-variant">Carregando…</p>';
 
-    const snap = await get(ref(db, "admins"));
-    const admins = snap.exists() ? snap.val() : {};
-    const emails = Object.keys(admins).filter(function (k) { return admins[k] === true; });
+    const [snapAdmins, snapConvites] = await Promise.all([
+      get(ref(db, "admins")),
+      get(ref(db, "adminsConvidados"))
+    ]);
+    const admins = snapAdmins.exists() ? snapAdmins.val() : {};
+    const convites = snapConvites.exists() ? snapConvites.val() : {};
 
-    if (emails.length === 0) {
+    const linhasAdmins = Object.keys(admins).map(function (uid) {
+      return { chave: uid, email: admins[uid], pendente: false };
+    });
+    const linhasConvites = Object.keys(convites).map(function (chaveEmail) {
+      return { chave: chaveEmail, email: convites[chaveEmail], pendente: true };
+    });
+    const linhas = linhasAdmins.concat(linhasConvites);
+
+    if (linhas.length === 0) {
       container.innerHTML = '<p class="p-4 font-body-md text-body-md text-on-surface-variant">Nenhum administrador cadastrado.</p>';
       return;
     }
 
-    container.innerHTML = emails.map(function (chave) {
-      // Chave é o e-mail normalizado; não temos o e-mail original salvo à
-      // parte, então guardamos também o e-mail "de exibição" no valor.
-      const emailExibicao = typeof admins[chave] === "string" ? admins[chave] : chave.replace(/_/g, ".");
+    container.innerHTML = linhas.map(function (linha) {
+      const badge = linha.pendente
+        ? '<span class="ml-2 text-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant">Convite pendente</span>'
+        : '';
       return (
         '<div class="p-4 flex items-center justify-between">' +
           '<div class="flex items-center gap-3">' +
             '<span class="material-symbols-outlined text-on-surface-variant">person</span>' +
-            '<span class="font-body-md text-body-md text-on-surface">' + emailExibicao + '</span>' +
+            '<span class="font-body-md text-body-md text-on-surface">' + linha.email + badge + '</span>' +
           '</div>' +
-          '<button class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-error-container hover:text-error transition-colors" data-remove-admin="' + chave + '" title="Remover"><span class="material-symbols-outlined text-[20px]">delete</span></button>' +
+          '<button class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-error-container hover:text-error transition-colors" data-remove-admin="' + linha.chave + '" data-pendente="' + linha.pendente + '" title="Remover"><span class="material-symbols-outlined text-[20px]">delete</span></button>' +
         '</div>'
       );
     }).join("");
@@ -1800,13 +1836,14 @@ const googleProvider = new GoogleAuthProvider();
     container.querySelectorAll("[data-remove-admin]").forEach(function (btn) {
       btn.addEventListener("click", async function () {
         const chave = btn.dataset.removeAdmin;
-        if (adminState.emailAdmin && emailParaChave(adminState.emailAdmin) === chave) {
+        const pendente = btn.dataset.pendente === "true";
+        if (!pendente && adminState.uidAdmin && adminState.uidAdmin === chave) {
           alert("Você não pode remover a si mesmo enquanto estiver logado.");
           return;
         }
         if (!confirm("Remover este administrador? Ele perderá acesso ao painel imediatamente.")) return;
         try {
-          await remove(ref(db, "admins/" + chave));
+          await remove(ref(db, (pendente ? "adminsConvidados/" : "admins/") + chave));
           renderListaAdmins();
         } catch (err) {
           console.error("Erro ao remover admin:", err);
@@ -1831,9 +1868,11 @@ const googleProvider = new GoogleAuthProvider();
       return;
     }
     try {
-      // Guardamos o e-mail original como valor (em vez de só "true") pra
-      // conseguir exibi-lo formatado corretamente depois.
-      await set(ref(db, "admins/" + emailParaChave(email)), email);
+      // Ainda não temos o UID dessa pessoa (só existe após o primeiro
+      // login dela), então guardamos como convite pendente por e-mail.
+      // No primeiro login com Google, checarAdmin() promove
+      // automaticamente pra "admins/<uid>".
+      await set(ref(db, "adminsConvidados/" + emailParaChave(email)), email);
       input.value = "";
       renderListaAdmins();
     } catch (err) {

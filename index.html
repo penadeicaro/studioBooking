@@ -492,9 +492,13 @@ Dúvidas sobre seu horário? <a class="text-primary font-bold hover:underline" h
 import { firebaseConfig } from "./firebase-config.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-functions.js";
 
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getDatabase(firebaseApp);
+const functions = getFunctions(firebaseApp, "southamerica-east1");
+const chamarGetDisponibilidade = httpsCallable(functions, "getDisponibilidade");
+const chamarCriarAgendamento = httpsCallable(functions, "criarAgendamento");
 
 (function () {
   "use strict";
@@ -592,15 +596,11 @@ const db = getDatabase(firebaseApp);
   };
   let MOCK_CONFIGURACOES = Object.assign({}, SEED_CONFIGURACOES);
 
-  // Horários mockados ocupados por data (simulando resposta do Google Calendar
-  // freebusy). Populado com alguns exemplos pra dar pra testar visualmente o
-  // estado "horário ocupado" sem precisar editar o objeto manualmente
-  // (antes ficava vazio {} e esse estado nunca aparecia no protótipo).
-  const MOCK_OCUPADOS = {
-    // formato: "YYYY-MM-DD": [{ inicio: "HH:MM", fim: "HH:MM" }]
-    "2026-11-06": [{ inicio: "10:00", fim: "12:00" }],
-    "2026-11-09": [{ inicio: "09:00", fim: "10:00" }, { inicio: "15:00", fim: "17:00" }]
-  };
+  // Cache de disponibilidade por data, alimentado pela Cloud Function
+  // getDisponibilidade (que lê o Google Calendar de verdade via freebusy).
+  // Evita rechamar a function toda vez que o usuário troca a duração
+  // sem trocar a data.
+  const cacheDisponibilidade = {};
 
   // Gera a grade de horários possíveis de início dinamicamente, a partir da
   // configuração (início/fim manhã e tarde) e da duração escolhida — em vez
@@ -889,7 +889,24 @@ const db = getDatabase(firebaseApp);
     return true;
   }
 
-  function renderHorarios() {
+  async function buscarOcupados(data) {
+    if (cacheDisponibilidade[data]) return cacheDisponibilidade[data];
+    try {
+      const resultado = await chamarGetDisponibilidade({ dataInicio: data });
+      const ocupados = (resultado.data && resultado.data.ocupados && resultado.data.ocupados[data]) || [];
+      cacheDisponibilidade[data] = ocupados;
+      return ocupados;
+    } catch (err) {
+      console.error("Erro ao buscar disponibilidade:", err);
+      // Em caso de falha, não bloqueia a tela — mostra a grade sem marcar
+      // nada como ocupado, mas a Cloud Function criarAgendamento sempre
+      // reconfirma disponibilidade no momento da escrita, então não há
+      // risco de duplo agendamento mesmo se essa consulta falhar.
+      return [];
+    }
+  }
+
+  async function renderHorarios() {
     const titulo = document.getElementById("horarios-titulo");
     const grid = document.getElementById("horarios-grid");
 
@@ -909,9 +926,11 @@ const db = getDatabase(firebaseApp);
     const diaMes = dataObj.getDate();
     const mesNome = MESES_PT[dataObj.getMonth()];
     titulo.textContent = "Horários disponíveis para " + nomeDiaSemana + ", " + diaMes + " de " + mesNome.slice(0, 3);
+    grid.innerHTML = '<p class="col-span-full font-body-md text-body-md text-on-surface-variant">Consultando agenda…</p>';
 
-    // No Firebase (Fase 4) isso vira: await calendarAPI.freebusy(bookingState.data)
-    const ocupados = MOCK_OCUPADOS[bookingState.data] || [];
+    const dataConsultada = bookingState.data; // evita condição de corrida se o usuário trocar de data rápido
+    const ocupados = await buscarOcupados(dataConsultada);
+    if (bookingState.data !== dataConsultada) return; // usuário já mudou de data, descarta este resultado
 
     // Grade gerada dinamicamente a partir da config + duração escolhida —
     // não mais a lista fixa de 6 horários que ignorava o fim do turno
@@ -1083,7 +1102,7 @@ const db = getDatabase(firebaseApp);
     }
   });
 
-  document.getElementById("requestForm").addEventListener("submit", function (e) {
+  document.getElementById("requestForm").addEventListener("submit", async function (e) {
     e.preventDefault();
 
     const nome = document.getElementById("input-nome").value.trim();
@@ -1098,13 +1117,41 @@ const db = getDatabase(firebaseApp);
     bookingState.nome = nome;
     bookingState.email = email;
 
-    // Fase 4: aqui entra a chamada real pra Cloud Function que:
-    // 1) cria o evento no Google Calendar (com attendees = email + emailsAdicionais + convidados fixos do tipo)
-    // 2) dispara o e-mail de confirmação via Gmail API
-    // 3) registra o log no Firebase Realtime Database
-    console.log("Enviando agendamento:", bookingState);
+    const btnSubmit = e.target.querySelector('button[type="submit"]');
+    const textoOriginalBtn = btnSubmit.textContent;
+    btnSubmit.disabled = true;
+    btnSubmit.textContent = "Confirmando…";
 
-    renderResumoFinal();
+    try {
+      const resultado = await chamarCriarAgendamento({
+        tipoProducaoId: bookingState.tipoProducao.id,
+        data: bookingState.data,
+        duracao: bookingState.duracao,
+        horaInicio: bookingState.horaInicio,
+        nome: bookingState.nome,
+        email: bookingState.email,
+        emailsAdicionais: bookingState.emailsAdicionais,
+        camposPreenchidos: bookingState.camposPreenchidos
+      });
+
+      if (!resultado.data || !resultado.data.sucesso) {
+        throw new Error("Resposta inesperada do servidor.");
+      }
+
+      // Invalida o cache de disponibilidade dessa data, já que acabou de
+      // mudar (o próprio horário reservado agora aparece como ocupado).
+      delete cacheDisponibilidade[bookingState.data];
+
+      renderResumoFinal();
+      irPara("sucesso");
+    } catch (err) {
+      console.error("Erro ao confirmar agendamento:", err);
+      const mensagem = (err && err.message) ? err.message : "Não foi possível confirmar o agendamento. Tente novamente.";
+      alert(mensagem);
+    } finally {
+      btnSubmit.disabled = false;
+      btnSubmit.textContent = textoOriginalBtn;
+    }
     irPara("sucesso");
   });
 
