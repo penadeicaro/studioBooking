@@ -1080,6 +1080,10 @@ const googleProvider = new GoogleAuthProvider();
       // combinado (chave = UID, valor = e-mail p/ exibição), pra não
       // travar o painel numa situação sem saída.
       await set(ref(db, "admins/" + uid), email);
+      // Reconfirma a leitura do próprio nó antes de prosseguir — evita
+      // que leituras seguintes (excecoes, tiposProducao) cheguem ao
+      // servidor antes da escrita do admin "assentar" nas regras.
+      await get(ref(db, "admins/" + uid));
       return true;
     }
     const snap = await get(ref(db, "admins/" + uid));
@@ -1093,6 +1097,7 @@ const googleProvider = new GoogleAuthProvider();
     const snapConvite = await get(ref(db, "adminsConvidados/" + chaveEmail));
     if (snapConvite.exists()) {
       await set(ref(db, "admins/" + uid), email);
+      await get(ref(db, "admins/" + uid));
       await remove(ref(db, "adminsConvidados/" + chaveEmail));
       return true;
     }
